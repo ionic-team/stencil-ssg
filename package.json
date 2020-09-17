@@ -1,0 +1,48 @@
+{
+  "name": "@stencil/ssg",
+  "version": "0.0.1",
+  "description": "Stencil Static Site Generation Utilities",
+  "keywords": [
+    "static site generation",
+    "static site generator",
+    "static site",
+    "ssg"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node scripts/clean.js && tsc -p ./tsconfig.json && node scripts/build.js && node scripts/license.js",
+    "license": "node scripts/license.js",
+    "test": "jest",
+    "test.watch": "jest --watchAll"
+  },
+  "license": "MIT",
+  "files": [
+    "dist/"
+  ],
+  "peerDependencies": {
+    "@stencil/core": "*"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^15.0.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@stencil/core": "^2.1.0-0",
+    "@types/jest": "^26.0.14",
+    "@types/marked": "^1.1.0",
+    "@types/parse5": "^5.0.3",
+    "@types/prismjs": "^1.16.1",
+    "front-matter": "^4.0.2",
+    "jest": "^26.4.2",
+    "marked": "^1.1.1",
+    "parse5": "^6.0.1",
+    "prettier": "^2.1.2",
+    "prismjs": "^1.21.0",
+    "rollup": "^2.27.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "slugify": "^1.4.5",
+    "typescript": "^4.0.2"
+  },
+  "engines": {
+    "node": ">=14.5.0"
+  }
+}

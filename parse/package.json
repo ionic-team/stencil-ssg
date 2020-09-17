@@ -1,0 +1,7 @@
+{
+  "name": "@stencil/ssg/parse",
+  "description": "Stencil Static Site Generation Parse Utilities (NodeJS/CommonJS)",
+  "main": "../dist/parse.js",
+  "types": "../dist/types/parse.d.ts",
+  "private": true
+}

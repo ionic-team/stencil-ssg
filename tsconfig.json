@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "strict": true,
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "experimentalDecorators": true,
+    "lib": ["dom", "es2020"],
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "es2018",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "./build"
+  },
+  "files": ["./src/index.ts", "src/parse.ts"]
+}
