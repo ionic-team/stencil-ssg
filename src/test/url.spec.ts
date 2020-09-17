@@ -1,4 +1,8 @@
-import { getPageNavigation, parseTableOfContents, PageNavigationOptions } from '../parse';
+import {
+  getPageNavigation,
+  parseTableOfContents,
+  PageNavigationOptions,
+} from '../parse';
 import path from 'path';
 import os from 'os';
 

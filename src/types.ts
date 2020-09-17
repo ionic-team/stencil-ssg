@@ -109,9 +109,14 @@ export interface ParseCacheOptions {
   cacheDir?: string;
 }
 
-export interface ParseMarkdownOptions extends ParseMarkdownContentOptions, ParseCacheOptions {}
+export interface ParseMarkdownOptions
+  extends ParseMarkdownContentOptions,
+    ParseCacheOptions {}
 
-export type ParseCache = (content: string, opts: ParseMarkdownOptions) => ParseCacheApi;
+export type ParseCache = (
+  content: string,
+  opts: ParseMarkdownOptions,
+) => ParseCacheApi;
 
 export interface ParseCacheApi {
   get(): Promise<MarkdownResults | null>;
@@ -143,7 +148,8 @@ export interface HtmlResults {
   tagNames: string[];
 }
 
-export interface MarkdownResults<T = { [key: string]: string }> extends HtmlResults {
+export interface MarkdownResults<T = { [key: string]: string }>
+  extends HtmlResults {
   /**
    * Contains extracted yaml attributes.
    */

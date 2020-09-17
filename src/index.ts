@@ -28,11 +28,15 @@ const toHypertext = (node: JsxAstNode[]) => {
 
   for (i = 0, l = node.length; i < l; i++) {
     arg = node[i];
-    if (i === 0 && typeof arg === 'string' && tagBlacklist[arg.toLowerCase().trim()]) {
+    if (
+      i === 0 &&
+      typeof arg === 'string' &&
+      tagBlacklist[arg.toLowerCase().trim()]
+    ) {
       arg = 'template';
     } else if (i === 1 && arg) {
       attrs = {};
-      Object.keys(arg).forEach((key) => {
+      Object.keys(arg).forEach(key => {
         k = key.toLowerCase();
         if (!k.startsWith('on') && k !== 'innerhtml') {
           attrs[key] = arg[key];

@@ -1,8 +1,16 @@
-import type { ParseMarkdownOptions, ParseMarkdownContentOptions, MarkdownResults, ParseCacheApi } from './types';
+import type {
+  ParseMarkdownOptions,
+  ParseMarkdownContentOptions,
+  MarkdownResults,
+  ParseCacheApi,
+} from './types';
 import frontMatter, { FrontMatterOptions } from 'front-matter';
 import { parseCache } from './parse-cache';
 import { parseHtmlContent } from './parse-html';
-import { parseMarkdownRenderer, getMarkedOptions } from './parse-markdown-render';
+import {
+  parseMarkdownRenderer,
+  getMarkedOptions,
+} from './parse-markdown-render';
 import { readFile } from './parse-utils';
 import { slugify } from './slugify';
 import path from 'path';
@@ -70,7 +78,9 @@ async function readMarkdownContent(filePath: string) {
   };
 
   if (ext === '.markdown') {
-    throw new Error(`@stencil/markdown will only use ".md" markdown extensions: ${filePath}`);
+    throw new Error(
+      `@stencil/markdown will only use ".md" markdown extensions: ${filePath}`,
+    );
   }
 
   if (ext === '.md') {
@@ -91,7 +101,9 @@ async function readMarkdownContent(filePath: string) {
         results.content = await readFile(indexMdFilePath, 'utf8');
         results.filePath = indexMdFilePath;
       } catch {
-        throw new Error(`Unable to read: "${filePath}". Attempted: "${mdFilePath}", "${indexMdFilePath}"`);
+        throw new Error(
+          `Unable to read: "${filePath}". Attempted: "${mdFilePath}", "${indexMdFilePath}"`,
+        );
       }
     }
   }

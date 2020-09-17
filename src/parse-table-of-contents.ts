@@ -1,5 +1,14 @@
-import type { TableOfContentsNode, ParseTableOfContentsOptions, TableOfContents } from './types';
-import { parseFragment, DefaultTreeTextNode, DefaultTreeElement, DefaultTreeDocumentFragment } from 'parse5';
+import type {
+  TableOfContentsNode,
+  ParseTableOfContentsOptions,
+  TableOfContents,
+} from './types';
+import {
+  parseFragment,
+  DefaultTreeTextNode,
+  DefaultTreeElement,
+  DefaultTreeDocumentFragment,
+} from 'parse5';
 import { parseMarkdownRenderer } from './parse-markdown-render';
 import { getUrl } from './parse-page-navigation';
 import { readFile } from './parse-utils';
@@ -43,7 +52,9 @@ export async function parseTableOfContents(
   });
 
   const frag: DefaultTreeDocumentFragment = parseFragment(html) as any;
-  const ulElm: DefaultTreeElement = frag.childNodes.find((n) => n.nodeName === 'ul') as any;
+  const ulElm: DefaultTreeElement = frag.childNodes.find(
+    n => n.nodeName === 'ul',
+  ) as any;
 
   const tocs: TableOfContents = {
     tocFilePath: tocMarkdownFilePath,
@@ -51,7 +62,15 @@ export async function parseTableOfContents(
     rootPagesDir,
     root: [],
   };
-  parseTableOfContentsItem(0, tocs.tocDirPath, rootPagesDir, ulElm, false, tocs.root, opts);
+  parseTableOfContentsItem(
+    0,
+    tocs.tocDirPath,
+    rootPagesDir,
+    ulElm,
+    false,
+    tocs.root,
+    opts,
+  );
 
   tocCache.set(cacheKey, tocs);
 
@@ -69,7 +88,7 @@ function parseTableOfContentsItem(
 ) {
   if (ulElm && ulElm.childNodes) {
     const liElms: DefaultTreeElement[] = ulElm.childNodes.filter(
-      (n) => (n as DefaultTreeElement).tagName === 'li',
+      n => (n as DefaultTreeElement).tagName === 'li',
     ) as any;
 
     for (const liElm of liElms) {
@@ -87,16 +106,20 @@ function parseTableOfContentsItem(
           const elm = n as DefaultTreeElement;
           if (elm.tagName === 'a') {
             const text = elm.childNodes
-              .filter((cn) => cn.nodeName === '#text')
-              .map((cn) => (cn as DefaultTreeTextNode).value)
+              .filter(cn => cn.nodeName === '#text')
+              .map(cn => (cn as DefaultTreeTextNode).value)
               .join(' ');
 
             if (text.trim() !== '') {
               tocNode.text = text;
             }
 
-            const hrefNode = elm.attrs.find((a) => a.name === 'href');
-            if (hrefNode && typeof hrefNode.value === 'string' && hrefNode.value.trim().length > 0) {
+            const hrefNode = elm.attrs.find(a => a.name === 'href');
+            if (
+              hrefNode &&
+              typeof hrefNode.value === 'string' &&
+              hrefNode.value.trim().length > 0
+            ) {
               const href = hrefNode.value.split('#')[0].split('?')[0];
               tocNode.url = href;
 
@@ -116,7 +139,15 @@ function parseTableOfContentsItem(
             addNode = true;
           } else if (elm.tagName === 'ul') {
             const tocsChildren: TableOfContentsNode[] = [];
-            parseTableOfContentsItem(depth + 1, tocDirPath, rootPagesDir, n as any, true, tocsChildren, opts);
+            parseTableOfContentsItem(
+              depth + 1,
+              tocDirPath,
+              rootPagesDir,
+              n as any,
+              true,
+              tocsChildren,
+              opts,
+            );
             if (tocsChildren.length > 0) {
               addNode = true;
               tocNode.children = tocsChildren;
@@ -141,7 +172,12 @@ export function getTableOfContentsData(toc: TableOfContents) {
   return r;
 }
 
-function findPath(ancestorFiles: WalkResult[], toc: TableOfContentsNode[], tocDir: string, r: WalkResult[]) {
+function findPath(
+  ancestorFiles: WalkResult[],
+  toc: TableOfContentsNode[],
+  tocDir: string,
+  r: WalkResult[],
+) {
   if (Array.isArray(toc)) {
     for (const t of toc) {
       let filePath = t.file ? path.join(tocDir, t.file) : '';
@@ -154,7 +190,7 @@ function findPath(ancestorFiles: WalkResult[], toc: TableOfContentsNode[], tocDi
       });
 
       const af = [
-        ...ancestorFiles.map((a) => {
+        ...ancestorFiles.map(a => {
           return {
             file: a.file,
             title: a.title,
@@ -173,15 +209,18 @@ function findPath(ancestorFiles: WalkResult[], toc: TableOfContentsNode[], tocDi
   }
 }
 
-export function findBestMatch(currentFile: string, r: WalkResult[] | undefined) {
+export function findBestMatch(
+  currentFile: string,
+  r: WalkResult[] | undefined,
+) {
   if (Array.isArray(r)) {
-    let a = r.filter((t) => t.file && t.file !== currentFile && t.title);
+    let a = r.filter(t => t.file && t.file !== currentFile && t.title);
     if (a.length > 0) {
       const f = a[0].file;
-      a = a.filter((b) => b.file === f);
+      a = a.filter(b => b.file === f);
       return a[a.length - 1];
     }
-    const b = r.find((t) => t.file && t.file !== currentFile);
+    const b = r.find(t => t.file && t.file !== currentFile);
 
     if (b) {
       return b;

@@ -5,7 +5,10 @@ import { slugify } from './slugify';
 const Prism = require('prismjs');
 const loadLanguages = require('prismjs/components/');
 
-export function parseMarkdownRenderer(markdown: string, markedOpts: MarkedOptions) {
+export function parseMarkdownRenderer(
+  markdown: string,
+  markedOpts: MarkedOptions,
+) {
   return new Promise<string>((resolve, reject) => {
     marked(markdown, markedOpts, (err, html) => {
       if (err) {
@@ -41,7 +44,10 @@ class MarkedRenderer extends Renderer {
       .join('\n');
 
     if (typeof lang === 'string' && lang.length > 0) {
-      if (!loadedPrismLangs.includes(lang) || !Object.keys(Prism.languages).includes(lang)) {
+      if (
+        !loadedPrismLangs.includes(lang) ||
+        !Object.keys(Prism.languages).includes(lang)
+      ) {
         loadedPrismLangs.push(lang);
         loadLanguages(loadedPrismLangs);
       }
@@ -49,8 +55,11 @@ class MarkedRenderer extends Renderer {
       if (primsLang) {
         const prismCode = Prism.highlight(code, Prism.languages[lang], lang);
         if (typeof prismCode === 'string') {
-          const langCss = (this.opts.langPrefix || 'language-') + escape(lang, true);
-          const preAttr = `class="${langCss}"${hcl.length > 0 ? ` data-highlighted-lines="${hcl.join(',')}"` : ``}`;
+          const langCss =
+            (this.opts.langPrefix || 'language-') + escape(lang, true);
+          const preAttr = `class="${langCss}"${
+            hcl.length > 0 ? ` data-highlighted-lines="${hcl.join(',')}"` : ``
+          }`;
           return `<pre ${preAttr}><code>${prismCode}</code></pre>\n`;
         }
       }
@@ -65,7 +74,9 @@ class MarkedRenderer extends Renderer {
 
       if (this.opts.headingAnchors && level > 1) {
         // <h2 id="my-id"><a href="#my-id" class="heading-anchor" aria-hidden="true"></a>Text</h2>
-        const cssClass = this.opts.headingAnchorClassName ? ` class="${this.opts.headingAnchorClassName}"` : ``;
+        const cssClass = this.opts.headingAnchorClassName
+          ? ` class="${this.opts.headingAnchorClassName}"`
+          : ``;
         const anchor = `<a href="#${id}"${cssClass} aria-hidden="true"></a>`;
         return `<h${level} id="${id}">${anchor}${text}</h${level}>`;
       }

@@ -1,5 +1,8 @@
 import type { PageNavigation, PageNavigationOptions } from './types';
-import { findBestMatch, getTableOfContentsData } from './parse-table-of-contents';
+import {
+  findBestMatch,
+  getTableOfContentsData,
+} from './parse-table-of-contents';
 import path from 'path';
 
 /**
@@ -11,7 +14,11 @@ import path from 'path';
  * @param rootPagesDir The directory path representing the root of the website.
  * @param pageFilePath The absolute path of the file, which should be a descendant of the `rootPagesDir`.
  */
-export async function getPageNavigation(rootPagesDir: string, pageFilePath: string, opts?: PageNavigationOptions) {
+export async function getPageNavigation(
+  rootPagesDir: string,
+  pageFilePath: string,
+  opts?: PageNavigationOptions,
+) {
   opts = opts || {};
 
   const results: PageNavigation = {
@@ -57,7 +64,10 @@ export async function getPageNavigation(rootPagesDir: string, pageFilePath: stri
         };
       }
 
-      const parent = findBestMatch(current.file, current.ancestorFiles?.reverse());
+      const parent = findBestMatch(
+        current.file,
+        current.ancestorFiles?.reverse(),
+      );
       if (parent) {
         results.parent = {
           url: getUrl(rootPagesDir, parent.file, opts),
@@ -70,7 +80,11 @@ export async function getPageNavigation(rootPagesDir: string, pageFilePath: stri
   return results;
 }
 
-export function getUrl(rootPagesDir: string, pageFilePath: string, opts: PageNavigationOptions) {
+export function getUrl(
+  rootPagesDir: string,
+  pageFilePath: string,
+  opts: PageNavigationOptions,
+) {
   if (typeof pageFilePath !== 'string' || pageFilePath === '') {
     return null;
   }
@@ -79,7 +93,9 @@ export function getUrl(rootPagesDir: string, pageFilePath: string, opts: PageNav
   pageFilePath = path.normalize(pageFilePath);
 
   if (!pageFilePath.startsWith(rootPagesDir)) {
-    throw new Error(`page file "${pageFilePath}" must be a descendant of the root directory "${rootPagesDir}"`);
+    throw new Error(
+      `page file "${pageFilePath}" must be a descendant of the root directory "${rootPagesDir}"`,
+    );
   }
 
   let url = path.relative(rootPagesDir, pageFilePath);

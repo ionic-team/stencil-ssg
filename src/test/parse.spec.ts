@@ -26,7 +26,7 @@ describe(`parseMarkdownContent`, () => {
     expect(imgAst[0]).toBe('img');
     expect(imgAst[1].alt).toBe('save the clock tower');
     expect(imgAst[1].src).toBe('clock-tower.png');
-    expect(imgAst[1].style).toEqual({ 'max-height': '360px', 'width': '240px' });
+    expect(imgAst[1].style).toEqual({ 'max-height': '360px', width: '240px' });
     expect(imgAst[1].class).toBe('marty mcfly');
   });
 
@@ -114,7 +114,7 @@ describe(`parseMarkdownContent`, () => {
 function md(txt: string) {
   const lines = txt.split('\n');
   return lines
-    .map((l) => l.trimLeft())
+    .map(l => l.trimLeft())
     .join('\n')
     .trim();
 }

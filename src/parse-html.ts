@@ -51,7 +51,13 @@ function parsedNodeToJsxAst(
       // fragment
       const data: any[] = [];
       for (let i = 0, l = node.childNodes.length; i < l; i++) {
-        const n = parsedNodeToJsxAst(node.childNodes[i] as any, anchors, headings, imgs, tagNames);
+        const n = parsedNodeToJsxAst(
+          node.childNodes[i] as any,
+          anchors,
+          headings,
+          imgs,
+          tagNames,
+        );
         if (typeof n === 'string') {
           // fragment top level white space we can probably ignore
           if (n.trim() !== '') {
@@ -166,7 +172,15 @@ function parsedNodeToJsxAst(
       }
 
       for (let i = 0, l = elm.childNodes.length; i < l; i++) {
-        data.push(parsedNodeToJsxAst(elm.childNodes[i] as any, anchors, headings, imgs, tagNames));
+        data.push(
+          parsedNodeToJsxAst(
+            elm.childNodes[i] as any,
+            anchors,
+            headings,
+            imgs,
+            tagNames,
+          ),
+        );
       }
 
       return data;
@@ -197,7 +211,10 @@ function getTextContent(elm: DefaultTreeElement) {
   return out.join('').trim();
 }
 
-function getChildTextContent(node: DefaultTreeElement | DefaultTreeTextNode, out: string[]) {
+function getChildTextContent(
+  node: DefaultTreeElement | DefaultTreeTextNode,
+  out: string[],
+) {
   if (node) {
     if (node.nodeName === '#text') {
       out.push((node as DefaultTreeTextNode).value);
