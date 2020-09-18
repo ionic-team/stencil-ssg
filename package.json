@@ -19,7 +19,8 @@
   },
   "license": "MIT",
   "files": [
-    "dist/"
+    "dist/",
+    "parse/"
   ],
   "peerDependencies": {
     "@stencil/core": "*"
