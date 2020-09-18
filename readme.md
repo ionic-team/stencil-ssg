@@ -1,6 +1,6 @@
 # Stencil Static Site Generation Utilities 🏎💨
 
-Utility functions and helpers for building static sites with [https://stenciljs.com/](Stencil):
+Utility functions and helpers for building static sites with [Stencil](https://stenciljs.com/):
 
 - Parse Markdown
 - Parse HTML
