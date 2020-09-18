@@ -16,8 +16,6 @@ License: MIT
 
 Contributors: Eugene Shkuropat, Paul Jacobson
 
-Homepage: https://github.com/nodeca/argparse#readme
-
 > (The MIT License)
 > 
 > Copyright (C) 2012 by Vitaly Puzrin
@@ -57,9 +55,9 @@ Homepage: http://esprima.org
 
 License: MIT
 
-Author: [Jason Campbell](http://twitter.com/jxson)
+Author: Jason Campbell <jasoncampbell@google.com> (http://twitter.com/jxson)
 
-Contributors: [Jason Campbell](http://twitter.com/jxson), [Jordan Santell](https://github.com/jsantell), [Kai Davenport](https://github.com/binocarlos), [Jean-Philippe Monette](https://github.com/jpmonette), [Marc-André Arseneault](https://github.com/arsnl), [Bret Comnes](http://bret.io), [Peter Bengtsson](https://github.com/peterbe)
+Contributors: Jason Campbell <jason@js.la> (http://twitter.com/jxson), Jordan Santell <jsantell@gmail.com> (https://github.com/jsantell), Kai Davenport <kaiyadavenport@gmail.com> (https://github.com/binocarlos), Jean-Philippe Monette <contact@jpmonette.net> (https://github.com/jpmonette), Marc-André Arseneault <marc-andre@arsnl.ca> (https://github.com/arsnl), Bret Comnes <bcomnes@gmail.com> (http://bret.io), Peter Bengtsson <mail@peterbe.com> (https://github.com/peterbe)
 
 Homepage: https://github.com/jxson/front-matter
 
@@ -79,9 +77,9 @@ Homepage: https://github.com/jxson/front-matter
 
 License: MIT
 
-Author: Vladimir Zapparov
+Author: Vladimir Zapparov <dervus.grim@gmail.com>
 
-Contributors: [Aleksey V Zapparov](http://www.ixti.net/), [Vitaly Puzrin](https://github.com/puzrin), [Martin Grenfell](http://got-ravings.blogspot.com)
+Contributors: Aleksey V Zapparov <ixti@member.fsf.org> (http://www.ixti.net/), Vitaly Puzrin <vitaly@rcdesign.ru> (https://github.com/puzrin), Martin Grenfell <martin.grenfell@gmail.com> (http://got-ravings.blogspot.com)
 
 Homepage: https://github.com/nodeca/js-yaml
 
@@ -167,7 +165,7 @@ Homepage: https://marked.js.org
 
 License: MIT
 
-Author: [Ivan Nikulin](https://github.com/inikulin)
+Author: Ivan Nikulin <ifaaan@gmail.com> (https://github.com/inikulin)
 
 Contributors: https://github.com/inikulin/parse5/graphs/contributors
 
@@ -199,7 +197,7 @@ Homepage: https://github.com/inikulin/parse5
 
 License: MIT
 
-Author: [Simeon Velichkov](https://simov.github.io)
+Author: Simeon Velichkov <simeonvelichkov@gmail.com> (https://simov.github.io)
 
 Homepage: https://github.com/simov/slugify
 
@@ -231,9 +229,7 @@ Homepage: https://github.com/simov/slugify
 
 License: BSD-3-Clause
 
-Author: [Alexandru Marasteanu](http://alexei.ro/)
-
-Homepage: https://github.com/alexei/sprintf.js#readme
+Author: Alexandru Marasteanu <hello@alexei.ro> (http://alexei.ro/)
 
 > Copyright (c) 2007-2014, Alexandru Marasteanu <hello [at) alexei (dot] ro>
 > All rights reserved.
