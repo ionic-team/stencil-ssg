@@ -71,6 +71,7 @@ export type {
   ImgData,
   JsxAstNode,
   MarkdownResults,
+  PageNavigation,
   PageNavigationData,
   PageNavigationOptions,
   RenderJsxProps,
