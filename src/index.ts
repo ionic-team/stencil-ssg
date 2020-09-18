@@ -3,9 +3,9 @@ import type { RenderJsxProps, JsxAstNode } from './types';
 
 /**
  * Functional component that renders markdown and html content that
- * has already been converted to a serializable JSX AST format.
+ * has already been converted into a serializable JSX AST format.
  */
-export const RenderJsxAst = (props: RenderJsxProps) => toHypertext(props.ast);
+export const RenderJsxAst = (props: RenderJsxProps) => (Array.isArray(props.ast) ? props.ast.map(toHypertext) : null);
 
 /**
  * Converts an nested array shaped like hypertext
