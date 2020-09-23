@@ -13,7 +13,7 @@
   "scripts": {
     "build": "node scripts/clean.js && tsc -p ./tsconfig.json && node scripts/build.js && node scripts/license.js",
     "license": "node scripts/license.js",
-    "release": "npm run build && np --no-2fa",
+    "release": "npm run build && npm run test && np --no-2fa",
     "test": "jest",
     "test.watch": "jest --watchAll"
   },
