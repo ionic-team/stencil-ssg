@@ -55,7 +55,12 @@ export interface ParseMarkdownContentOptions {
    */
   langPrefix?: string;
   /**
-   * CSS classname to be added to the first paragraph found within the content.
+   * CSS classname to be added to the first paragraphs found within the content.
+   * Intro paragraphs are the first paragraphs before the first subheading. For
+   * example, all the paragraphs between the `h1` and `h2` headings will get the
+   * paragraph intro CSS classname, but all paragraphs after the `h2` will
+   * not receive the classname. If there are no subheadings, then only the first
+   * paragraph will receive the classname.
    * @default "paragraph-intro"
    */
   paragraphIntroClassName?: string;

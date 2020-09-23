@@ -7,13 +7,36 @@ const loadLanguages = require('prismjs/components/');
 
 export function parseMarkdownRenderer(
   markdown: string,
-  markedOpts: MarkedOptions,
+  markedOpts: ParseMarkdownOptions,
 ) {
   return new Promise<string>((resolve, reject) => {
     marked(markdown, markedOpts, (err, html) => {
       if (err) {
         reject(err);
       } else {
+        if (
+          typeof markedOpts.paragraphIntroClassName === 'string' &&
+          markedOpts.paragraphIntroClassName.length > 0
+        ) {
+          const renderer: MarkedRenderer = markedOpts.renderer as any;
+          if (renderer.hasFirstParagraph) {
+            if (!renderer.hasSubHeading) {
+              // does not have any sub headings, only 1st paragraph should get the class
+              const reg = new RegExp(
+                ` class="${markedOpts.paragraphIntroClassName}"`,
+                `g`,
+              );
+              html = html.replace(reg, ``);
+            }
+
+            const reg = new RegExp(
+              ` ${markedOpts.paragraphIntroClassName}-first`,
+              `g`,
+            );
+            html = html.replace(reg, ``);
+          }
+        }
+
         resolve(html);
       }
     });
@@ -21,7 +44,8 @@ export function parseMarkdownRenderer(
 }
 
 class MarkedRenderer extends Renderer {
-  private hasParagraphIntro = false;
+  hasFirstParagraph = false;
+  hasSubHeading = false;
 
   constructor(private opts: ParseMarkdownOptions) {
     super(opts);
@@ -71,6 +95,9 @@ class MarkedRenderer extends Renderer {
   }
 
   heading(text: string, level: number, raw: string) {
+    if (level > 1) {
+      this.hasSubHeading = true;
+    }
     if (this.opts.headingIds !== false) {
       const id = (this.opts.headingIdPrefix || '') + slugify(raw);
 
@@ -90,12 +117,18 @@ class MarkedRenderer extends Renderer {
   }
 
   paragraph(text: string) {
-    if (!this.hasParagraphIntro) {
-      this.hasParagraphIntro = true;
-      const css = this.opts.paragraphIntroClassName || '';
-      return `<p class="${css}">${text}</p>\n`;
+    if (
+      typeof this.opts.paragraphIntroClassName === 'string' &&
+      this.opts.paragraphIntroClassName.length > 0
+    ) {
+      if (!this.hasFirstParagraph) {
+        this.hasFirstParagraph = true;
+        return `<p class="${this.opts.paragraphIntroClassName} ${this.opts.paragraphIntroClassName}-first">${text}</p>\n`;
+      }
+      if (!this.hasSubHeading) {
+        return `<p class="${this.opts.paragraphIntroClassName}">${text}</p>\n`;
+      }
     }
-
     return `<p>${text}</p>\n`;
   }
 }

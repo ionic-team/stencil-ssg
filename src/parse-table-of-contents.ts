@@ -9,7 +9,10 @@ import {
   DefaultTreeElement,
   DefaultTreeDocumentFragment,
 } from 'parse5';
-import { parseMarkdownRenderer } from './parse-markdown-render';
+import {
+  getMarkedOptions,
+  parseMarkdownRenderer,
+} from './parse-markdown-render';
 import { getUrl } from './parse-page-navigation';
 import { readFile } from './parse-utils';
 import path from 'path';
@@ -43,13 +46,7 @@ export async function parseTableOfContents(
     return cachedToc;
   }
 
-  const html = await parseMarkdownRenderer(content, {
-    breaks: true,
-    gfm: true,
-    silent: false,
-    smartLists: true,
-    smartypants: true,
-  });
+  const html = await parseMarkdownRenderer(content, getMarkedOptions({}));
 
   const frag: DefaultTreeDocumentFragment = parseFragment(html) as any;
   const ulElm: DefaultTreeElement = frag.childNodes.find(

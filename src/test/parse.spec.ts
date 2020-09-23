@@ -10,10 +10,10 @@ describe(`parseMarkdownContent`, () => {
     };
   });
 
-  it(`paragraph intro`, async () => {
+  it(`paragraph intro with no sub headings`, async () => {
     const r = await parseMarkdownContent(
       md(`
-        # Heading
+        # Heading1
 
         Paragraph 1
 
@@ -23,7 +23,28 @@ describe(`parseMarkdownContent`, () => {
     );
 
     expect(r.html).toBe(
-      `<h1 id="heading">Heading</h1><p class="paragraph-intro">Paragraph 1</p>\n<p>Paragraph 2</p>\n`,
+      `<h1 id="heading1">Heading1</h1><p class="paragraph-intro">Paragraph 1</p>\n<p>Paragraph 2</p>\n`,
+    );
+  });
+
+  it(`paragraph intro with sub headings`, async () => {
+    const r = await parseMarkdownContent(
+      md(`
+        # Heading1
+
+        Paragraph 1
+
+        Paragraph 2
+
+        ## Header2
+
+        Paragraph 3
+      `),
+      opts,
+    );
+
+    expect(r.html).toBe(
+      `<h1 id="heading1">Heading1</h1><p class="paragraph-intro">Paragraph 1</p>\n<p class="paragraph-intro">Paragraph 2</p>\n<h2 id="header2">Header2</h2><p>Paragraph 3</p>\n`,
     );
   });
 
