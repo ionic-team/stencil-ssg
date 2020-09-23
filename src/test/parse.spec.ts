@@ -10,6 +10,23 @@ describe(`parseMarkdownContent`, () => {
     };
   });
 
+  it(`paragraph intro`, async () => {
+    const r = await parseMarkdownContent(
+      md(`
+        # Heading
+
+        Paragraph 1
+
+        Paragraph 2
+      `),
+      opts,
+    );
+
+    expect(r.html).toBe(
+      `<h1 id="heading">Heading</h1><p class="paragragh-intro">Paragraph 1</p>\n<p>Paragraph 2</p>\n`,
+    );
+  });
+
   it(`code block`, async () => {
     const c: string[] = [];
     c.push('```typescript');

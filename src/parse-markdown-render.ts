@@ -21,6 +21,8 @@ export function parseMarkdownRenderer(
 }
 
 class MarkedRenderer extends Renderer {
+  private hasParagraphIntro = false;
+
   constructor(private opts: ParseMarkdownOptions) {
     super(opts);
   }
@@ -86,6 +88,16 @@ class MarkedRenderer extends Renderer {
 
     return `<h${level}>${text}</h${level}>`;
   }
+
+  paragraph(text: string) {
+    if (!this.hasParagraphIntro) {
+      this.hasParagraphIntro = true;
+      const css = this.opts.paragraphIntroClassName || '';
+      return `<p class="${css}">${text}</p>\n`;
+    }
+
+    return `<p>${text}</p>\n`;
+  }
 }
 
 export function getMarkedOptions(opts: ParseMarkdownOptions) {
@@ -112,6 +124,7 @@ const defaultParseMarkdownOpts: ParseMarkdownOptions = {
   gfm: true,
   headingAnchorClassName: `heading-anchor`,
   headingIds: true,
+  paragraphIntroClassName: `paragragh-intro`,
 };
 
 const loadedPrismLangs: string[] = [];

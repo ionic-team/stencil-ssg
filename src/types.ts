@@ -55,6 +55,11 @@ export interface ParseMarkdownContentOptions {
    */
   langPrefix?: string;
   /**
+   * CSS classname to be added to the first paragraph found within the content.
+   * @default "paragragh-intro"
+   */
+  paragraphIntroClassName?: string;
+  /**
    * Type: object Default: new Renderer()
    *
    * An object containing functions to render tokens to HTML.
