@@ -1,4 +1,4 @@
-import { slugify } from '../index';
+import { slugify } from '../slugify';
 
 it(`slugify`, () => {
   expect(slugify(`My Slugify`)).toBe(`my-slugify`);

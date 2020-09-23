@@ -1,11 +1,18 @@
 import { h } from '@stencil/core';
-import type { RenderJsxProps, JsxAstNode } from './types';
+import type { RenderJsxProps, JsxAstNode, ElementPropsHook } from './types';
 
 /**
  * Functional component that renders markdown and html content that
  * has already been converted into a serializable JSX AST format.
  */
-export const RenderJsxAst = (props: RenderJsxProps) => (Array.isArray(props.ast) ? props.ast.map(toHypertext) : null);
+export const RenderJsxAst = (props: RenderJsxProps) => {
+  const elementProps =
+    typeof props.elementProps === 'function' ? props.elementProps : undefined;
+
+  return Array.isArray(props.ast)
+    ? props.ast.map(node => toHypertext(elementProps, node))
+    : null;
+};
 
 /**
  * Converts an nested array shaped like hypertext
@@ -14,38 +21,34 @@ export const RenderJsxAst = (props: RenderJsxProps) => (Array.isArray(props.ast)
  * becomes
  * `h('div', { id: 'my-id' }, 'text')`
  */
-const toHypertext = (node: JsxAstNode[]) => {
+const toHypertext = (
+  elementProps: ElementPropsHook | undefined,
+  node: JsxAstNode[],
+) => {
   if (!Array.isArray(node) || node.length < 2) {
     return null;
   }
 
   const args = [];
+  const tagName = typeof node[0] === 'string' ? node[0].toLowerCase() : '';
+  if (tagBlacklist[tagName]) {
+    // return h('template', null, 'removed ' + tagName);
+  }
+
   let i: number;
   let l: number;
   let arg: any;
-  let attrs: any;
-  let k: string;
 
   for (i = 0, l = node.length; i < l; i++) {
     arg = node[i];
-    if (
-      i === 0 &&
-      typeof arg === 'string' &&
-      tagBlacklist[arg.toLowerCase().trim()]
-    ) {
-      arg = 'template';
-    } else if (i === 1 && arg) {
-      attrs = {};
-      Object.keys(arg).forEach(key => {
-        k = key.toLowerCase();
-        if (!k.startsWith('on') && k !== 'innerhtml') {
-          attrs[key] = arg[key];
-        }
-      });
-      arg = attrs;
+
+    if (i === 1) {
+      if (elementProps && tagName) {
+        arg = elementProps(tagName, arg);
+      }
     } else if (i > 1) {
       if (Array.isArray(arg)) {
-        arg = toHypertext(arg);
+        arg = toHypertext(elementProps, arg);
       }
     }
     args.push(arg);

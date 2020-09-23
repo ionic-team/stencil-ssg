@@ -224,7 +224,22 @@ export type JsxAstNode = any;
 
 export interface RenderJsxProps {
   ast: JsxAstNode[];
+  /**
+   * A hook called for every element, passing the tag name
+   * and its props to the function. The returned props is
+   * what will get used when rendering. This is useful for adding
+   * listeners which cannot be serialized, and/or updating element
+   * props.
+   */
+  elementProps?: ElementPropsHook;
 }
+
+export type ElementPropsHook = (
+  tagName: string,
+  props: RenderAstJsxProps,
+) => RenderAstJsxProps;
+
+export type RenderAstJsxProps = { [key: string]: any } | null;
 
 export interface SlugifyOptions {
   /**
