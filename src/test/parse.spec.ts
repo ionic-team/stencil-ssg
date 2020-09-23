@@ -10,6 +10,17 @@ describe(`parseMarkdownContent`, () => {
     };
   });
 
+  it(`code block`, async () => {
+    const c: string[] = [];
+    c.push('```typescript');
+    c.push('function mph() {');
+    c.push('       return 88;');
+    c.push('}');
+    c.push('```');
+    const r = await parseMarkdownContent(c.join('\n'), opts);
+    expect(r.html).toContain('<pre class="language-typescript"><code>');
+  });
+
   it(`images and inlined styles`, async () => {
     const r = await parseMarkdownContent(
       md(`
