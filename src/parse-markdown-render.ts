@@ -124,7 +124,7 @@ const defaultParseMarkdownOpts: ParseMarkdownOptions = {
   gfm: true,
   headingAnchorClassName: `heading-anchor`,
   headingIds: true,
-  paragraphIntroClassName: `paragragh-intro`,
+  paragraphIntroClassName: `paragraph-intro`,
 };
 
 const loadedPrismLangs: string[] = [];

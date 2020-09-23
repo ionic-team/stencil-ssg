@@ -23,7 +23,7 @@ describe(`parseMarkdownContent`, () => {
     );
 
     expect(r.html).toBe(
-      `<h1 id="heading">Heading</h1><p class="paragragh-intro">Paragraph 1</p>\n<p>Paragraph 2</p>\n`,
+      `<h1 id="heading">Heading</h1><p class="paragraph-intro">Paragraph 1</p>\n<p>Paragraph 2</p>\n`,
     );
   });
 

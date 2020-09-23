@@ -56,7 +56,7 @@ export interface ParseMarkdownContentOptions {
   langPrefix?: string;
   /**
    * CSS classname to be added to the first paragraph found within the content.
-   * @default "paragragh-intro"
+   * @default "paragraph-intro"
    */
   paragraphIntroClassName?: string;
   /**
