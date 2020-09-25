@@ -5,9 +5,7 @@ describe(`parseMarkdownContent`, () => {
   let opts: ParseMarkdownOptions;
 
   beforeEach(() => {
-    opts = {
-      useCache: false,
-    };
+    opts = {};
   });
 
   it(`paragraph intro with no sub headings`, async () => {

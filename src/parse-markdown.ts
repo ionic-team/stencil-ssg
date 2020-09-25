@@ -2,10 +2,8 @@ import type {
   ParseMarkdownOptions,
   ParseMarkdownContentOptions,
   MarkdownResults,
-  ParseCacheApi,
 } from './types';
 import frontMatter, { FrontMatterOptions } from 'front-matter';
-import { parseCache } from './parse-cache';
 import { parseHtmlContent } from './parse-html';
 import {
   parseMarkdownRenderer,
@@ -26,8 +24,6 @@ import path from 'path';
  */
 export async function parseMarkdown(id: string, opts?: ParseMarkdownOptions) {
   opts = opts || {};
-  const fsOpts = getFrontMatterOptions(opts);
-  const markedOpts = getMarkedOptions(opts);
 
   let content: string;
   let filePath: string;
@@ -41,17 +37,6 @@ export async function parseMarkdown(id: string, opts?: ParseMarkdownOptions) {
     filePath = readResults.filePath;
   }
 
-  let cacheApi: ParseCacheApi | null = null;
-
-  if (opts.useCache !== false) {
-    // default to use the cache if it's not false
-    cacheApi = parseCache(`${content}:${id}`, { ...fsOpts, ...markedOpts });
-    const cacheGetResults = await cacheApi.get();
-    if (cacheGetResults) {
-      return cacheGetResults;
-    }
-  }
-
   const results: MarkdownResults = await parseMarkdownContent(content, opts);
 
   if (typeof results.slug !== 'string') {
@@ -62,10 +47,6 @@ export async function parseMarkdown(id: string, opts?: ParseMarkdownOptions) {
     results.slug = slugify(basename!);
   }
   results.filePath = filePath;
-
-  if (cacheApi) {
-    await cacheApi.put(results);
-  }
 
   return results;
 }

@@ -80,7 +80,7 @@ export interface ParseMarkdownContentOptions {
   sanitizer?(html: string): string;
 }
 
-export interface ParseCacheOptions {
+export interface ParseMarkdownOptions extends ParseMarkdownContentOptions {
   /**
    * Will resolve the markdown file path given an id, much like how nodejs would
    * resolve a `.js` file. By default, if the given id does not have an `.md`
@@ -102,35 +102,6 @@ export interface ParseCacheOptions {
    * @default true
    */
   resolveMarkdownPath?: (id: string) => Promise<string>;
-  /**
-   * If the parse command should read and write cache files.
-   * @default true
-   */
-  useCache?: boolean;
-  /**
-   * Cache buster number to create new cache file names. A cache buster
-   * number is required if any of the options provided are functions.
-   */
-  cacheBuster?: number;
-  /**
-   * Cache directory.
-   * @default `os.tmpdir()`.
-   */
-  cacheDir?: string;
-}
-
-export interface ParseMarkdownOptions
-  extends ParseMarkdownContentOptions,
-    ParseCacheOptions {}
-
-export type ParseCache = (
-  content: string,
-  opts: ParseMarkdownOptions,
-) => ParseCacheApi;
-
-export interface ParseCacheApi {
-  get(): Promise<MarkdownResults | null>;
-  put(results: MarkdownResults<any>): Promise<void>;
 }
 
 export interface HtmlResults {

@@ -71,7 +71,6 @@ describe(`getPagination`, () => {
     const r = await getPageNavigation(rootPagesDir, pageFilePath, opts);
     expect(r.current.url).toBe('/');
     expect(r.current.title).toBe('Introduction');
-    expect(r.current.title).toBe('Introduction');
     expect(r.parent).toBe(null);
     expect(r.previous).toBe(null);
     expect(r.next.url).toBe('/docs');
