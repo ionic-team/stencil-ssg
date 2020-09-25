@@ -7,6 +7,7 @@ export type {
   MarkdownResults,
   PageNavigation,
   PageNavigationData,
+  ParseHtmlOptions,
   ParseMarkdownContentOptions,
   ParseMarkdownOptions,
   PageNavigationOptions,

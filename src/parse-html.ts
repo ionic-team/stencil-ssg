@@ -1,21 +1,95 @@
-import type { AnchorData, HeadingData, HtmlResults, ImgData } from './types';
-import { createFragment } from '@stencil/core/mock-doc';
+import type {
+  AnchorData,
+  HeadingData,
+  HtmlResults,
+  ImgData,
+  ParseHtmlOptions,
+} from './types';
+import { createFragment, serializeNodeToHtml } from '@stencil/core/mock-doc';
 import { readFile } from './parse-utils';
+import { slugify } from './slugify';
 
-export async function parseHtml(filePath: string) {
+export async function parseHtml(filePath: string, opts?: ParseHtmlOptions) {
   const content = await readFile(filePath, 'utf8');
-  return parseHtmlContent(content);
+  return parseHtmlContent(content, opts);
 }
 
-export async function parseHtmlContent(content: string): Promise<HtmlResults> {
-  const frag = createFragment(content);
+export async function parseHtmlContent(
+  html: string,
+  opts?: ParseHtmlOptions,
+): Promise<HtmlResults> {
+  opts = getHtmlOptions(opts);
+  const frag = createFragment(html);
+  const doc = frag.ownerDocument;
 
+  if (typeof opts.beforeSerialize === 'function') {
+    await opts.beforeSerialize(frag);
+  }
+
+  const headingElms = frag.querySelectorAll('h1,h2,h3,h4,h5,h6');
+  const headings = Array.from(headingElms).map(headingElm => {
+    const headingData: HeadingData = {
+      text: headingElm.textContent!,
+      level: (headingLevels as any)[headingElm.tagName],
+      id: null,
+    };
+
+    if (opts?.headingIds) {
+      headingData.id = (opts.headingIdPrefix || '') + slugify(headingData.text);
+      headingElm.setAttribute('id', headingData.id);
+    } else {
+      headingData.id = headingElm.getAttribute('id');
+    }
+
+    if (
+      opts?.headingAnchors &&
+      typeof headingData.id === 'string' &&
+      headingData.id.length > 0
+    ) {
+      // <h2 id="my-id"><a href="#my-id" class="heading-anchor" aria-hidden="true"></a>Text</h2>
+      const anchor = doc.createElement('a');
+      anchor.setAttribute(`href`, `#${headingData.id}`);
+      if (typeof opts.headingAnchorClassName === 'string') {
+        anchor.className = opts.headingAnchorClassName;
+      }
+      anchor.setAttribute(`aria-hidden`, `true`);
+      headingElm.insertBefore(anchor, headingElm.firstChild);
+    }
+
+    return headingData;
+  });
+
+  if (
+    typeof opts.paragraphIntroClassName === 'string' &&
+    opts.paragraphIntroClassName.length > 0
+  ) {
+    const rootElements = Array.from(frag.children);
+    const hasSubHeadings = rootElements.find(isSubHeading);
+    if (hasSubHeadings) {
+      // add paragraph intro class to every <p> until the first heading
+      for (const elm of rootElements) {
+        if (isSubHeading(elm)) {
+          break;
+        }
+        if (elm.tagName === 'P') {
+          elm.classList.add(opts.paragraphIntroClassName);
+        }
+      }
+    } else {
+      // no sub headings, so only add the class to the first paragraph
+      for (const elm of rootElements) {
+        if (elm.tagName === 'P') {
+          elm.classList.add(opts.paragraphIntroClassName);
+          break;
+        }
+      }
+    }
+  }
   const anchors: AnchorData[] = [];
-  const headings: HeadingData[] = [];
   const imgs: ImgData[] = [];
   const tagNames: string[] = [];
 
-  const ast = parsedNodeToJsxAst(frag, anchors, headings, imgs, tagNames);
+  const ast = parsedNodeToJsxAst(frag, anchors, imgs, tagNames);
 
   return {
     ast,
@@ -23,8 +97,38 @@ export async function parseHtmlContent(content: string): Promise<HtmlResults> {
     headings,
     imgs,
     tagNames,
+    html: serializeNodeToHtml(frag),
   };
 }
+
+const headingLevels = { H1: 1, H2: 2, H3: 3, H4: 4, H5: 5, H6: 6 };
+
+function isSubHeading(elm: Element) {
+  if (elm) {
+    const tagName = elm.tagName;
+    return (
+      tagName === 'H2' ||
+      tagName === 'H3' ||
+      tagName === 'H4' ||
+      tagName === 'H5' ||
+      tagName === 'H6'
+    );
+  }
+  return false;
+}
+
+function getHtmlOptions(opts?: ParseHtmlOptions) {
+  return {
+    ...defaultParseHtmlOpts,
+    ...opts,
+  };
+}
+
+const defaultParseHtmlOpts: ParseHtmlOptions = {
+  headingAnchorClassName: `heading-anchor`,
+  headingIds: true,
+  paragraphIntroClassName: `paragraph-intro`,
+};
 
 /**
  * Converts parse5's html node format into a serialiable JSX AST format.
@@ -36,7 +140,6 @@ export async function parseHtmlContent(content: string): Promise<HtmlResults> {
 function parsedNodeToJsxAst(
   node: Node,
   anchors: AnchorData[],
-  headings: HeadingData[],
   imgs: ImgData[],
   tagNames: string[],
 ): any {
@@ -49,14 +152,9 @@ function parsedNodeToJsxAst(
     if (node.nodeName === '#document-fragment') {
       // fragment
       const data: any[] = [];
-      for (let i = 0, l = node.childNodes.length; i < l; i++) {
-        const n = parsedNodeToJsxAst(
-          node.childNodes[i],
-          anchors,
-          headings,
-          imgs,
-          tagNames,
-        );
+      const childNodes = node.childNodes;
+      for (let i = 0, l = childNodes.length; i < l; i++) {
+        const n = parsedNodeToJsxAst(childNodes[i], anchors, imgs, tagNames);
         if (typeof n === 'string') {
           // fragment top level white space we can probably ignore
           if (n.trim() !== '') {
@@ -110,60 +208,13 @@ function parsedNodeToJsxAst(
 
       switch (tag) {
         case 'a': {
-          if (typeof attrs.href === 'string' && !attrs.href.startsWith('#')) {
+          const href = attrs.href;
+          if (typeof href === 'string' && !href.startsWith('#')) {
             anchors.push({
               text: elm.textContent!,
-              href: attrs.href,
+              href,
             });
           }
-          break;
-        }
-        case 'h1': {
-          headings.push({
-            text: elm.textContent!,
-            id: attrs.id,
-            level: 1,
-          });
-          break;
-        }
-        case 'h2': {
-          headings.push({
-            text: elm.textContent!,
-            id: attrs.id,
-            level: 2,
-          });
-          break;
-        }
-        case 'h3': {
-          headings.push({
-            text: elm.textContent!,
-            id: attrs.id,
-            level: 3,
-          });
-          break;
-        }
-        case 'h4': {
-          headings.push({
-            text: elm.textContent!,
-            id: attrs.id,
-            level: 4,
-          });
-          break;
-        }
-        case 'h5': {
-          headings.push({
-            text: elm.textContent!,
-            id: attrs.id,
-            level: 5,
-          });
-          break;
-        }
-        case 'h6': {
-          headings.push({
-            text: elm.textContent!,
-            id: attrs.id,
-            level: 6,
-          });
           break;
         }
         case 'img': {
@@ -175,16 +226,9 @@ function parsedNodeToJsxAst(
         }
       }
 
-      for (let i = 0, l = elm.childNodes.length; i < l; i++) {
-        data.push(
-          parsedNodeToJsxAst(
-            elm.childNodes[i] as any,
-            anchors,
-            headings,
-            imgs,
-            tagNames,
-          ),
-        );
+      const childNodes = elm.childNodes;
+      for (let i = 0, l = childNodes.length; i < l; i++) {
+        data.push(parsedNodeToJsxAst(childNodes[i], anchors, imgs, tagNames));
       }
 
       return data;

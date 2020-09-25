@@ -116,13 +116,13 @@ export async function parseMarkdownContent<T = { [key: string]: string }>(
   const fmResults = frontMatter(content, fsOpts);
   const html = await parseMarkdownRenderer(fmResults.body, markedOpts);
 
-  const htmlResults = await parseHtmlContent(html);
+  const htmlResults = await parseHtmlContent(html, opts);
 
   const attributes = { ...(fmResults.attributes as any) };
 
   const results: MarkdownResults<T> = {
     attributes,
-    html,
+    html: htmlResults.html,
     ast: htmlResults.ast,
     anchors: htmlResults.anchors,
     headings: htmlResults.headings,

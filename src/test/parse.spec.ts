@@ -8,6 +8,40 @@ describe(`parseMarkdownContent`, () => {
     opts = {};
   });
 
+  it(`before serialize`, async () => {
+    opts.beforeSerialize = frag => {
+      const h1 = frag.querySelector('h1');
+      h1.textContent = `Updated Heading`;
+      const div = frag.ownerDocument.createElement('div');
+      div.innerHTML = `<img src="/logo.png">`;
+      frag.appendChild(div);
+    };
+    const r = await parseMarkdownContent(
+      md(`
+        # Heading
+
+        Paragraph
+      `),
+      opts,
+    );
+
+    expect(r.headings[0].level).toBe(1);
+    expect(r.headings[0].text).toBe(`Updated Heading`);
+    expect(r.headings[0].id).toBe(`updated-heading`);
+    expect(r.html).toBe(
+      `<h1 id="updated-heading">Updated Heading</h1><p class="paragraph-intro">Paragraph</p><div><img src="/logo.png"></div>`,
+    );
+  });
+
+  it(`anchor links`, async () => {
+    opts.headingAnchors = true;
+    const r = await parseMarkdownContent(md(`# Heading`), opts);
+
+    expect(r.html).toBe(
+      `<h1 id="heading"><a href="#heading" class="heading-anchor" aria-hidden="true"></a>Heading</h1>`,
+    );
+  });
+
   it(`paragraph intro with no sub headings`, async () => {
     const r = await parseMarkdownContent(
       md(`
@@ -21,7 +55,7 @@ describe(`parseMarkdownContent`, () => {
     );
 
     expect(r.html).toBe(
-      `<h1 id="heading1">Heading1</h1><p class="paragraph-intro">Paragraph 1</p>\n<p>Paragraph 2</p>\n`,
+      `<h1 id="heading1">Heading1</h1><p class="paragraph-intro">Paragraph 1</p> <p>Paragraph 2</p>`,
     );
   });
 
@@ -42,7 +76,7 @@ describe(`parseMarkdownContent`, () => {
     );
 
     expect(r.html).toBe(
-      `<h1 id="heading1">Heading1</h1><p class="paragraph-intro">Paragraph 1</p>\n<p class="paragraph-intro">Paragraph 2</p>\n<h2 id="header2">Header2</h2><p>Paragraph 3</p>\n`,
+      `<h1 id="heading1">Heading1</h1><p class="paragraph-intro">Paragraph 1</p> <p class="paragraph-intro">Paragraph 2</p> <h2 id="header2">Header2</h2><p>Paragraph 3</p>`,
     );
   });
 

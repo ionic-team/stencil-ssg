@@ -1,4 +1,49 @@
-export interface ParseMarkdownContentOptions {
+export interface ParseHtmlOptions {
+  /**
+   * Hook that can be used to modify the document fragment. The fragment is a
+   * standards based DOM object and common web APIs such as setAttribute and
+   * querySelector can be used. The `document` can be accessed at `frag.ownerDocument`.
+   * To create an element, use `frag.ownerDocument.createElement('div')`.
+   * @param frag DOM document fragment of the parsed content.
+   */
+  beforeSerialize?(frag: DocumentFragment): void | Promise<void>;
+  /**
+   * Include an id attribute in h1-h6 heading tags.
+   * @default true
+   */
+  headingIds?: boolean;
+  /**
+   * Set the prefix for heading tag ids.
+   */
+  headingIdPrefix?: string;
+  /**
+   * Include anchors within h2-h6 tags using their heading id as the href hash.
+   * This is useful so h2-h6 headings can be linked to using a hash in the url.
+   * Additionally, `headingIds` must be `true` for heading anchors. It's recommended
+   * to also set the anchor's CSS on a heading hover.
+   *
+   * `<h2 id="my-id"><a href="#my-id" class="heading-anchor" aria-hidden="true"></a>Text</h2>`
+   * @default false
+   */
+  headingAnchors?: boolean;
+  /**
+   * The CSS classname to add to heading anchor elements.
+   * @default "heading-anchor"
+   */
+  headingAnchorClassName?: string;
+  /**
+   * CSS classname to be added to the first paragraphs found within the content.
+   * Intro paragraphs are the first paragraphs before the first subheading. For
+   * example, all the paragraphs between the `h1` and `h2` headings will get the
+   * paragraph intro CSS classname, but all paragraphs after the `h2` will
+   * not receive the classname. If there are no subheadings, then only the first
+   * paragraph will receive the classname.
+   * @default "paragraph-intro"
+   */
+  paragraphIntroClassName?: string;
+}
+
+export interface ParseMarkdownContentOptions extends ParseHtmlOptions {
   /**
    * Whether to use [safeload](https://github.com/nodeca/js-yaml#safeload-string---options-)
    * @default true
@@ -26,58 +71,14 @@ export interface ParseMarkdownContentOptions {
    */
   gfm?: boolean;
   /**
-   * Include an id attribute in h1-h6 heading tags.
-   * @default true
-   */
-  headingIds?: boolean;
-  /**
-   * Set the prefix for heading tag ids.
-   */
-  headingIdPrefix?: string;
-  /**
-   * Include anchors within h2-h6 tags using their heading id as the href hash.
-   * This is useful so h2-h6 headings can be linked to using a hash in the url.
-   * Additionally, `headingIds` must be `true` for heading anchors. It's recommended
-   * to also set the anchor's CSS on a heading hover.
-   *
-   * `<h2 id="my-id"><a href="#my-id" class="heading-anchor" aria-hidden="true"></a>Text</h2>`
-   * @default false
-   */
-  headingAnchors?: boolean;
-  /**
-   * The CSS classname to add to heading anchor elements.
-   * @default "heading-anchor"
-   */
-  headingAnchorClassName?: string;
-  /**
    * Set the prefix for code block classes.
    * @default "language-"
    */
   langPrefix?: string;
   /**
-   * CSS classname to be added to the first paragraphs found within the content.
-   * Intro paragraphs are the first paragraphs before the first subheading. For
-   * example, all the paragraphs between the `h1` and `h2` headings will get the
-   * paragraph intro CSS classname, but all paragraphs after the `h2` will
-   * not receive the classname. If there are no subheadings, then only the first
-   * paragraph will receive the classname.
-   * @default "paragraph-intro"
-   */
-  paragraphIntroClassName?: string;
-  /**
-   * Type: object Default: new Renderer()
-   *
-   * An object containing functions to render tokens to HTML.
-   */
-  renderer?: any;
-  /**
    * Sanitize the output. Ignore any HTML that has been input.
    */
   sanitize?: boolean;
-  /**
-   * Optionally sanitize found HTML with a sanitizer function.
-   */
-  sanitizer?(html: string): string;
 }
 
 export interface ParseMarkdownOptions extends ParseMarkdownContentOptions {
@@ -127,6 +128,12 @@ export interface HtmlResults {
    * All the HTML tags found, but no duplicates.
    */
   tagNames: string[];
+  /**
+   * The resulting HTML, which may be different from the passed in
+   * HTML due to any changes that could have happened within the
+   * `beforeSerialize(frag)` option.
+   */
+  html: string;
 }
 
 export interface MarkdownResults<T = { [key: string]: string }>
