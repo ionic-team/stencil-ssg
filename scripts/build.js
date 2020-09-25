@@ -33,7 +33,15 @@ async function bundleIndexEsm() {
 async function bundleParseCjs() {
   const inputOpts = {
     input: path.join(buildDir, 'parse.js'),
-    external: ['crypto', 'path', 'prismjs', 'fs', 'os', 'util'],
+    external: [
+      '@stencil/core/mock-doc',
+      'crypto',
+      'path',
+      'prismjs',
+      'fs',
+      'os',
+      'util',
+    ],
     plugins: [
       nodeResolve({
         preferBuiltins: true,

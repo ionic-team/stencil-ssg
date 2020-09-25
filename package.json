@@ -22,23 +22,21 @@
     "dist/",
     "parse/"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "@stencil/core": "*"
   },
   "devDependencies": {
     "@ionic/prettier-config": "^1.0.0",
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
-    "@stencil/core": "^2.1.0-0",
+    "@stencil/core": "^2.1.0-1",
     "@types/jest": "^26.0.14",
     "@types/marked": "^1.1.0",
-    "@types/parse5": "^5.0.3",
     "@types/prismjs": "^1.16.1",
     "front-matter": "^4.0.2",
     "jest": "^26.4.2",
     "marked": "^1.1.1",
     "np": "^6.5.0",
-    "parse5": "^6.0.1",
     "prettier": "^2.1.2",
     "prismjs": "^1.21.0",
     "rollup": "^2.27.1",

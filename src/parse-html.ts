@@ -1,6 +1,5 @@
 import type { AnchorData, HeadingData, HtmlResults, ImgData } from './types';
-import type { DefaultTreeTextNode, DefaultTreeElement } from 'parse5';
-import { parseFragment } from 'parse5';
+import { createFragment } from '@stencil/core/mock-doc';
 import { readFile } from './parse-utils';
 
 export async function parseHtml(filePath: string) {
@@ -9,7 +8,7 @@ export async function parseHtml(filePath: string) {
 }
 
 export async function parseHtmlContent(content: string): Promise<HtmlResults> {
-  const frag: any = parseFragment(content);
+  const frag = createFragment(content);
 
   const anchors: AnchorData[] = [];
   const headings: HeadingData[] = [];
@@ -35,7 +34,7 @@ export async function parseHtmlContent(content: string): Promise<HtmlResults> {
  * This AST can then be quickly converted into JSX vdom at runtime
  */
 function parsedNodeToJsxAst(
-  node: any,
+  node: Node,
   anchors: AnchorData[],
   headings: HeadingData[],
   imgs: ImgData[],
@@ -44,7 +43,7 @@ function parsedNodeToJsxAst(
   if (node) {
     if (node.nodeName === '#text') {
       // text node
-      return (node as DefaultTreeTextNode).value;
+      return (node as Text).nodeValue;
     }
 
     if (node.nodeName === '#document-fragment') {
@@ -52,7 +51,7 @@ function parsedNodeToJsxAst(
       const data: any[] = [];
       for (let i = 0, l = node.childNodes.length; i < l; i++) {
         const n = parsedNodeToJsxAst(
-          node.childNodes[i] as any,
+          node.childNodes[i],
           anchors,
           headings,
           imgs,
@@ -71,11 +70,11 @@ function parsedNodeToJsxAst(
       return data;
     }
 
-    const elm = node as DefaultTreeElement;
+    const elm = node as HTMLElement;
     if (typeof elm.tagName === 'string') {
       // element
       const data: any[] = [];
-      const attrs: { [tag: string]: string | null } = {};
+      const attrs: { [tag: string]: any } = {};
       let tag = elm.tagName.toLowerCase();
 
       if (tagBlacklist[tag]) {
@@ -88,15 +87,20 @@ function parsedNodeToJsxAst(
 
       data.push(tag);
 
-      if (elm.attrs.length > 0) {
-        for (let j = 0, k = elm.attrs.length; j < k; j++) {
-          const attr = elm.attrs[j];
+      const elmAttributes = elm.attributes;
+      const styleStr = elm.getAttribute('style');
+
+      if (elmAttributes.length > 0 || styleStr) {
+        for (let j = 0, k = elmAttributes.length; j < k; j++) {
+          const attr = elmAttributes[j];
           if (attr) {
-            if (attr.name === 'style') {
-              attrs.style = convertStyleAttrToObj(attr.value);
-            } else {
-              attrs[attr.name] = attr.value;
-            }
+            attrs[attr.name] = attr.value;
+          }
+        }
+        if (styleStr) {
+          const style = convertStyleAttrToObj(styleStr);
+          if (style && Object.keys(style).length > 0) {
+            attrs.style = style;
           }
         }
         data.push(attrs);
@@ -108,7 +112,7 @@ function parsedNodeToJsxAst(
         case 'a': {
           if (typeof attrs.href === 'string' && !attrs.href.startsWith('#')) {
             anchors.push({
-              text: getTextContent(elm),
+              text: elm.textContent!,
               href: attrs.href,
             });
           }
@@ -116,7 +120,7 @@ function parsedNodeToJsxAst(
         }
         case 'h1': {
           headings.push({
-            text: getTextContent(elm),
+            text: elm.textContent!,
             id: attrs.id,
             level: 1,
           });
@@ -124,7 +128,7 @@ function parsedNodeToJsxAst(
         }
         case 'h2': {
           headings.push({
-            text: getTextContent(elm),
+            text: elm.textContent!,
             id: attrs.id,
             level: 2,
           });
@@ -132,7 +136,7 @@ function parsedNodeToJsxAst(
         }
         case 'h3': {
           headings.push({
-            text: getTextContent(elm),
+            text: elm.textContent!,
             id: attrs.id,
             level: 3,
           });
@@ -140,7 +144,7 @@ function parsedNodeToJsxAst(
         }
         case 'h4': {
           headings.push({
-            text: getTextContent(elm),
+            text: elm.textContent!,
             id: attrs.id,
             level: 4,
           });
@@ -148,7 +152,7 @@ function parsedNodeToJsxAst(
         }
         case 'h5': {
           headings.push({
-            text: getTextContent(elm),
+            text: elm.textContent!,
             id: attrs.id,
             level: 5,
           });
@@ -156,7 +160,7 @@ function parsedNodeToJsxAst(
         }
         case 'h6': {
           headings.push({
-            text: getTextContent(elm),
+            text: elm.textContent!,
             id: attrs.id,
             level: 6,
           });
@@ -197,36 +201,14 @@ function convertStyleAttrToObj(styleStr: string) {
       if (splt.length === 2) {
         const prop = splt[0].trim();
         const value = splt[1].trim();
-        styleObj[prop] = value;
+        if (prop !== '') {
+          styleObj[prop] = value;
+        }
       }
       return styleObj;
     }, {} as any);
   }
   return null;
-}
-
-function getTextContent(elm: DefaultTreeElement) {
-  const out: string[] = [];
-  getChildTextContent(elm, out);
-  return out.join('').trim();
-}
-
-function getChildTextContent(
-  node: DefaultTreeElement | DefaultTreeTextNode,
-  out: string[],
-) {
-  if (node) {
-    if (node.nodeName === '#text') {
-      out.push((node as DefaultTreeTextNode).value);
-    } else {
-      const childNodes = (node as DefaultTreeElement).childNodes;
-      if (childNodes) {
-        for (let i = 0, l = childNodes.length; i < l; i++) {
-          getChildTextContent(childNodes[i] as any, out);
-        }
-      }
-    }
-  }
 }
 
 const tagBlacklist: { [key: string]: true } = {

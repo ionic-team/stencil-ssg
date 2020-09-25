@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const entryDeps = ['front-matter', 'marked', 'parse5', 'slugify'];
+const entryDeps = ['front-matter', 'marked', 'slugify'];
 
 function createLicense() {
   const thirdPartyLicensesRootPath = path.join(__dirname, '..', 'NOTICE.md');
@@ -17,7 +17,7 @@ function createLicense() {
   });
 
   const licenses = bundledDeps
-    .map((l) => l.license)
+    .map(l => l.license)
     .reduce((arr, l) => {
       if (!arr.includes(l)) {
         arr.push(l);
@@ -32,13 +32,13 @@ function createLicense() {
 
 The published distribution contains the following licenses:
 
-${licenses.map((l) => `    ` + l).join('\n')}
+${licenses.map(l => `    ` + l).join('\n')}
 
 The following distributions have been modified to be bundled within this distribution:
 
 --------
 
-${bundledDeps.map((l) => l.content).join('\n')}
+${bundledDeps.map(l => l.content).join('\n')}
 
 `.trim() + '\n';
 
@@ -49,7 +49,7 @@ ${bundledDeps.map((l) => l.content).join('\n')}
 
 function createBundledDeps(bundledDeps, deps) {
   if (Array.isArray(deps)) {
-    deps.forEach((moduleId) => {
+    deps.forEach(moduleId => {
       if (includeDepLicense(bundledDeps, moduleId)) {
         const bundledDep = createBundledDepLicense(moduleId);
         bundledDeps.push(bundledDep);
@@ -76,7 +76,7 @@ function createBundledDepLicense(moduleId) {
 
   if (Array.isArray(pkgJson.licenses)) {
     const bundledLicenses = [];
-    pkgJson.licenses.forEach((l) => {
+    pkgJson.licenses.forEach(l => {
       if (l.type) {
         license = l.type;
         bundledLicenses.push(l.type);
@@ -107,14 +107,17 @@ function createBundledDepLicense(moduleId) {
     depLicense
       .trim()
       .split('\n')
-      .forEach((ln) => {
+      .forEach(ln => {
         output.push(`> ${ln}`);
       });
   }
 
   output.push(``, `--------`, ``);
 
-  const dependencies = (pkgJson.dependencies ? Object.keys(pkgJson.dependencies) : []).sort();
+  const dependencies = (pkgJson.dependencies
+    ? Object.keys(pkgJson.dependencies)
+    : []
+  ).sort();
 
   return {
     moduleId,
@@ -132,7 +135,7 @@ function getContributors(prop) {
   if (Array.isArray(prop)) {
     return prop
       .map(getAuthor)
-      .filter((c) => !!c)
+      .filter(c => !!c)
       .join(', ');
   }
 
@@ -171,7 +174,7 @@ function includeDepLicense(bundledDeps, moduleId) {
   if (moduleId.startsWith('@types/')) {
     return false;
   }
-  if (bundledDeps.some((b) => b.moduleId === moduleId)) {
+  if (bundledDeps.some(b => b.moduleId === moduleId)) {
     return false;
   }
   return true;

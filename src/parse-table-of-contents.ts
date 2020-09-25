@@ -3,12 +3,7 @@ import type {
   ParseTableOfContentsOptions,
   TableOfContents,
 } from './types';
-import {
-  parseFragment,
-  DefaultTreeTextNode,
-  DefaultTreeElement,
-  DefaultTreeDocumentFragment,
-} from 'parse5';
+import { createFragment } from '@stencil/core/mock-doc';
 import {
   getMarkedOptions,
   parseMarkdownRenderer,
@@ -48,10 +43,8 @@ export async function parseTableOfContents(
 
   const html = await parseMarkdownRenderer(content, getMarkedOptions({}));
 
-  const frag: DefaultTreeDocumentFragment = parseFragment(html) as any;
-  const ulElm: DefaultTreeElement = frag.childNodes.find(
-    n => n.nodeName === 'ul',
-  ) as any;
+  const frag = createFragment(html);
+  const ulElm = frag.querySelector('ul');
 
   const tocs: TableOfContents = {
     tocFilePath: tocMarkdownFilePath,
@@ -78,46 +71,37 @@ function parseTableOfContentsItem(
   depth: number,
   tocDirPath: string,
   rootPagesDir: string,
-  ulElm: DefaultTreeElement,
+  ulElm: HTMLElement | null,
   hasParent: boolean,
   tocs: TableOfContentsNode[],
   opts: ParseTableOfContentsOptions,
 ) {
-  if (ulElm && ulElm.childNodes) {
-    const liElms: DefaultTreeElement[] = ulElm.childNodes.filter(
-      n => (n as DefaultTreeElement).tagName === 'li',
-    ) as any;
+  if (ulElm) {
+    const liElms = Array.from(ulElm.children).filter(n => n.nodeName === 'LI');
 
     for (const liElm of liElms) {
       const tocNode: TableOfContentsNode = { depth };
+      const childNodes = Array.from(liElm.childNodes);
 
       let addNode = false;
-      for (const n of liElm.childNodes) {
+      for (const n of childNodes) {
         if (n.nodeName === '#text') {
-          const text = (n as DefaultTreeTextNode).value;
+          const text = (n as Text).textContent;
           if (typeof text === 'string' && text.trim() !== '') {
             tocNode.text = text;
             addNode = true;
           }
-        } else if (typeof (n as DefaultTreeElement).tagName === 'string') {
-          const elm = n as DefaultTreeElement;
-          if (elm.tagName === 'a') {
-            const text = elm.childNodes
-              .filter(cn => cn.nodeName === '#text')
-              .map(cn => (cn as DefaultTreeTextNode).value)
-              .join(' ');
-
-            if (text.trim() !== '') {
+        } else if (typeof (n as HTMLElement).tagName === 'string') {
+          const elm = n as HTMLElement;
+          if (elm.tagName === 'A') {
+            const text = elm.textContent;
+            if (typeof text === 'string' && text.trim() !== '') {
               tocNode.text = text;
             }
 
-            const hrefNode = elm.attrs.find(a => a.name === 'href');
-            if (
-              hrefNode &&
-              typeof hrefNode.value === 'string' &&
-              hrefNode.value.trim().length > 0
-            ) {
-              const href = hrefNode.value.split('#')[0].split('?')[0];
+            const hrefValue = elm.getAttribute('href');
+            if (typeof hrefValue === 'string' && hrefValue.trim().length > 0) {
+              const href = hrefValue.split('#')[0].split('?')[0];
               tocNode.url = href;
 
               if (!href.toLowerCase().startsWith('http')) {
@@ -134,7 +118,7 @@ function parseTableOfContentsItem(
               }
             }
             addNode = true;
-          } else if (elm.tagName === 'ul') {
+          } else if (elm.tagName === 'UL') {
             const tocsChildren: TableOfContentsNode[] = [];
             parseTableOfContentsItem(
               depth + 1,
