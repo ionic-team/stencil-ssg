@@ -23,13 +23,12 @@
     "parse/"
   ],
   "dependencies": {
-    "@stencil/core": "*"
+    "@stencil/core": ">=2.1.0-1"
   },
   "devDependencies": {
     "@ionic/prettier-config": "^1.0.0",
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
-    "@stencil/core": "^2.1.0-1",
     "@types/jest": "^26.0.14",
     "@types/marked": "^1.1.0",
     "@types/prismjs": "^1.16.1",
