@@ -25,17 +25,21 @@ class MarkedRenderer extends Renderer {
   }
 
   html(html: string): any {    
-    const match = html.match(/<(\s*[a-z]+-[a-z]+)([^>]*\s*)(\/\s*>)/m);
-    if (!match) return html;
+    const regEx = /<(?<identifier>[a-z]+(?:-[a-z]+)+)(?<props>[^>]*)(?:\/>)/m;
+    const match = html.match(regEx);
 
-    const identifier = match[1];
-    const props = match[2]
+    type groupProps = { identifier: string, props?: string };
+    if (match) {
+      const { identifier, props } = match.groups as groupProps;
 
-    return `<${identifier}${props}></${identifier}>\n`;
+      return `<${identifier}${props ? props : ''}></${identifier}>\n`;
+    }
+
+    return html; 
   }
 
   paragraph(text: string) {
-    const match = text.match(/<\s*[a-z]+-[a-z]+[^>]*\s*>.*<\s*\/\s*[a-z]+-[a-z]+\s*>/gm);
+    const match = text.match(/<[a-z]+(-[a-z]+)+[^>]*>.*<\/\s*[a-z]+(-[a-z]+)+>/m);
     if (match) return `${text}\n`;
 
     return `<p>${text}</p>\n`;    

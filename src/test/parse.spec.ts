@@ -191,27 +191,33 @@ describe(`parseMarkdownContent`, () => {
     expect(r.attributes.description).toBe(`Markdown parser`);
   });
 
-  it(`custom components in full format at top level`, async () => {
+  it(`Custom components in full format at top level.  Includes one with multiple dashes.`, async () => {
     const r = await parseMarkdownContent(
       md(`
         This is the first paragraph.
 
-        <custom-component class="ui-component">component text here</custom-component>
+        <custom-component>component text here</custom-component>
+
+        <very-custom-component class="ui-component"></very-custom-component>
         
         This is the second paragraph.
       `),
       opts,
     )
+
     const firstParagraphAst = r.ast[0];
     const customComponentAst = r.ast[1];
-    const secondParagraphAst = r.ast[2];
+    const veryCustomComponentAst = r.ast[2];
+    const secondParagraphAst = r.ast[3];
     
     expect(firstParagraphAst[0]).toBe(`p`);
     expect(firstParagraphAst[2]).toBe(`This is the first paragraph.`);
 
     expect(customComponentAst[0]).toBe(`custom-component`);
-    expect(customComponentAst[1].class).toBe(`ui-component`);
     expect(customComponentAst[2]).toBe(`component text here`);
+
+    expect(veryCustomComponentAst[0]).toBe(`very-custom-component`);
+    expect(veryCustomComponentAst[1].class).toBe(`ui-component`);
 
     expect(secondParagraphAst[0]).toBe(`p`);
     expect(secondParagraphAst[2]).toBe(`This is the second paragraph.`);
