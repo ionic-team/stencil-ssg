@@ -190,6 +190,69 @@ describe(`parseMarkdownContent`, () => {
     expect(r.attributes.title).toBe(`StencilJS`);
     expect(r.attributes.description).toBe(`Markdown parser`);
   });
+
+  it(`custom components in full format at top level`, async () => {
+    const r = await parseMarkdownContent(
+      md(`
+        This is the first paragraph.
+
+        <custom-component class="ui-component">component text here</custom-component>
+        
+        This is the second paragraph.
+      `),
+      opts,
+    )
+    const firstParagraphAst = r.ast[0];
+    const customComponentAst = r.ast[1];
+    const secondParagraphAst = r.ast[2];
+    
+    expect(firstParagraphAst[0]).toBe(`p`);
+    expect(firstParagraphAst[2]).toBe(`This is the first paragraph.`);
+
+    expect(customComponentAst[0]).toBe(`custom-component`);
+    expect(customComponentAst[1].class).toBe(`ui-component`);
+
+    expect(secondParagraphAst[0]).toBe(`p`);
+    expect(secondParagraphAst[2]).toBe(`This is the second paragraph.`);
+  });
+
+  it(`custom components in abbreviated format at top level`, async () => {
+    const r = await parseMarkdownContent(
+      md(`
+        This is the first paragraph.
+
+        <ui-button
+          id="myComponent"
+          class="ui-button ui-button--round"
+          text="submit"
+          type="round"
+          back="blue"
+          style="max-height: 360px;width:240px"          
+        />
+        
+        This is the second paragraph.
+      `),
+      opts,
+    )
+    const firstParagraphAst = r.ast[0];
+    const customComponentAst = r.ast[1];
+    const secondParagraphAst = r.ast[2];
+    
+    expect(firstParagraphAst[0]).toBe(`p`);
+    expect(firstParagraphAst[2]).toBe(`This is the first paragraph.`);
+
+    expect(customComponentAst[0]).toBe(`ui-button`);
+    expect(customComponentAst[1].id).toBe(`myComponent`);
+    expect(customComponentAst[1].class).toBe(`ui-button ui-button--round`);
+    expect(customComponentAst[1].text).toBe(`submit`);
+    expect(customComponentAst[1].type).toBe(`round`);
+    expect(customComponentAst[1].back).toBe(`blue`);
+    expect(customComponentAst[1].style['max-height']).toBe(`360px`);
+    expect(customComponentAst[1].style.width).toBe(`240px`);
+
+    expect(secondParagraphAst[0]).toBe(`p`);
+    expect(secondParagraphAst[2]).toBe(`This is the second paragraph.`);
+  });
 });
 
 function md(txt: string) {
