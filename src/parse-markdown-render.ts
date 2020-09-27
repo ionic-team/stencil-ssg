@@ -25,7 +25,7 @@ class MarkedRenderer extends Renderer {
   }
 
   html(html: string): any {    
-    const regEx = /<(?<identifier>[a-z]+(?:-[a-z]+)+)(?<props>[^>]*)(?:\/>)/m;
+    const regEx = /<(?<identifier>[a-z]+(?:-[a-z]+)+)(?<props>[\s\S]*)(?:\/>)/m;
     const match = html.match(regEx);
 
     type groupProps = { identifier: string, props?: string };
