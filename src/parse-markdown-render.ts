@@ -39,7 +39,7 @@ class MarkedRenderer extends Renderer {
   }
 
   paragraph(text: string) {
-    const match = text.match(/<[a-z]+(-[a-z]+)+[^>]*>.*<\/\s*[a-z]+(-[a-z]+)+>/m);
+    const match = text.match(/<[a-z]+(-[a-z]+)+[^>]*>.*<\/[a-z]+(-[a-z]+)+>/m);
     if (match) return `${text}\n`;
 
     return `<p>${text}</p>\n`;    
