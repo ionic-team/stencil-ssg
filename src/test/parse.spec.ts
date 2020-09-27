@@ -211,6 +211,7 @@ describe(`parseMarkdownContent`, () => {
 
     expect(customComponentAst[0]).toBe(`custom-component`);
     expect(customComponentAst[1].class).toBe(`ui-component`);
+    expect(customComponentAst[2]).toBe(`component text here`);
 
     expect(secondParagraphAst[0]).toBe(`p`);
     expect(secondParagraphAst[2]).toBe(`This is the second paragraph.`);
