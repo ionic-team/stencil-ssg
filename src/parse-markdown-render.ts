@@ -24,6 +24,27 @@ class MarkedRenderer extends Renderer {
     super(opts);
   }
 
+  html(html: string): any {    
+    const regEx = /<(?<identifier>[a-z]+(?:-[a-z]+)+)(?<props>[\s\S]*)(?:\/>)/m;
+    const match = html.match(regEx);
+
+    type groupProps = { identifier: string, props?: string };
+    if (match) {
+      const { identifier, props } = match.groups as groupProps;
+
+      return `<${identifier}${props ? props : ''}></${identifier}>\n`;
+    }
+
+    return html; 
+  }
+
+  paragraph(text: string) {
+    const match = text.match(/<[a-z]+(-[a-z]+)+[^>]*>.*<\/[a-z]+(-[a-z]+)+>/m);
+    if (match) return `${text}\n`;
+
+    return `<p>${text}</p>\n`;    
+  }
+
   code(code: string, infostring: any, escaped: boolean) {
     if (this.opts.codeSyntaxHighlighting === false) {
       return super.code(code, infostring, escaped);
