@@ -6,8 +6,11 @@
     "static site generation",
     "static site generator",
     "static site",
-    "ssg"
+    "ssg",
+    "stenciljs"
   ],
+  "author": "Ionic Team",
+  "homepage": "https://stenciljs.com/",
   "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
@@ -49,5 +52,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionic-team/stencil-ssg.git"
   }
 }
