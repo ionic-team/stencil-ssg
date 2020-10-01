@@ -9,8 +9,7 @@ import {
   parseMarkdownRenderer,
   getMarkedOptions,
 } from './parse-markdown-render';
-import { readFile } from './parse-utils';
-import { slugify } from './slugify';
+import { readFile, slugifyFilePath } from './parse-utils';
 import path from 'path';
 
 /**
@@ -40,18 +39,14 @@ export async function parseMarkdown(id: string, opts?: ParseMarkdownOptions) {
   const results: MarkdownResults = await parseMarkdownContent(content, opts);
 
   if (typeof results.slug !== 'string') {
-    let basename = path.basename(filePath);
-    if (basename.toLowerCase() === 'index.md') {
-      basename = path.basename(path.dirname(filePath));
-    }
-    results.slug = slugify(basename!);
+    results.slug = slugifyFilePath(filePath);
   }
   results.filePath = filePath;
 
   return results;
 }
 
-async function readMarkdownContent(filePath: string) {
+export async function readMarkdownContent(filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
   const results = {
     content: '',
