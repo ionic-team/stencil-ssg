@@ -104,9 +104,17 @@ export async function parseMarkdownContent<T = { [key: string]: string }>(
   if (typeof content !== 'string') {
     throw new Error(`content must be a string`);
   }
-  content = content.trim();
 
   opts = opts || {};
+  content = content.trim();
+
+  if (typeof opts.beforeMarkdownParse === 'function') {
+    content = await opts.beforeMarkdownParse(content);
+    if (typeof content !== 'string') {
+      throw new Error(`content must be a string`);
+    }
+  }
+
   const fsOpts = getFrontMatterOptions(opts);
   const markedOpts = getMarkedOptions(opts);
 

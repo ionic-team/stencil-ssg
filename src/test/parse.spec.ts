@@ -8,8 +8,8 @@ describe(`parseMarkdownContent`, () => {
     opts = {};
   });
 
-  it(`before serialize`, async () => {
-    opts.beforeSerialize = frag => {
+  it(`before html serialize`, async () => {
+    opts.beforeHtmlSerialize = frag => {
       const h1 = frag.querySelector('h1');
       h1.textContent = `Updated Heading`;
       const div = frag.ownerDocument.createElement('div');
@@ -203,13 +203,13 @@ describe(`parseMarkdownContent`, () => {
         This is the second paragraph.
       `),
       opts,
-    )
+    );
 
     const firstParagraphAst = r.ast[0];
     const customComponentAst = r.ast[1];
     const veryCustomComponentAst = r.ast[2];
     const secondParagraphAst = r.ast[3];
-    
+
     expect(firstParagraphAst[0]).toBe(`p`);
     expect(firstParagraphAst[2]).toBe(`This is the first paragraph.`);
 
@@ -240,11 +240,11 @@ describe(`parseMarkdownContent`, () => {
         This is the second paragraph.
       `),
       opts,
-    )
+    );
     const firstParagraphAst = r.ast[0];
     const customComponentAst = r.ast[1];
     const secondParagraphAst = r.ast[2];
-    
+
     expect(firstParagraphAst[0]).toBe(`p`);
     expect(firstParagraphAst[2]).toBe(`This is the first paragraph.`);
 

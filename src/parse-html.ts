@@ -19,11 +19,23 @@ export async function parseHtmlContent(
   opts?: ParseHtmlOptions,
 ): Promise<HtmlResults> {
   opts = getHtmlOptions(opts);
+
+  if (typeof html !== 'string') {
+    throw new Error(`html must be a string`);
+  }
+
+  if (typeof opts.beforeHtmlParse === 'function') {
+    html = await opts.beforeHtmlParse(html);
+    if (typeof html !== 'string') {
+      throw new Error(`html must be a string`);
+    }
+  }
+
   const frag = createFragment(html);
   const doc = frag.ownerDocument;
 
-  if (typeof opts.beforeSerialize === 'function') {
-    await opts.beforeSerialize(frag);
+  if (typeof opts.beforeHtmlSerialize === 'function') {
+    await opts.beforeHtmlSerialize(frag);
   }
 
   const headingElms = frag.querySelectorAll('h1,h2,h3,h4,h5,h6');

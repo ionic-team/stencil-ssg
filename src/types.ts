@@ -1,12 +1,17 @@
 export interface ParseHtmlOptions {
   /**
-   * Hook that can be used to modify the document fragment. The fragment is a
-   * standards based DOM object and common web APIs such as setAttribute and
-   * querySelector can be used. The `document` can be accessed at `frag.ownerDocument`.
+   * Hook that can be used to modify the HTML content before it is parsed.
+   */
+  beforeHtmlParse?(htmlContent: string): string | Promise<string>;
+  /**
+   * Hook that can be used to modify the document fragment before it is
+   * serialized into an HTML string. The fragment is a standards based
+   * DOM object and common web APIs such as setAttribute and querySelector
+   * can be used. The `document` can be accessed at `frag.ownerDocument`.
    * To create an element, use `frag.ownerDocument.createElement('div')`.
    * @param frag DOM document fragment of the parsed content.
    */
-  beforeSerialize?(frag: DocumentFragment): void | Promise<void>;
+  beforeHtmlSerialize?(frag: DocumentFragment): void | Promise<void>;
   /**
    * Include an id attribute in h1-h6 heading tags.
    * @default true
@@ -53,6 +58,10 @@ export interface ParseMarkdownContentOptions extends ParseHtmlOptions {
    * A prefix URL for any relative link.
    */
   baseUrl?: string;
+  /**
+   * Hook that can be used to modify the markdown content before it is parsed.
+   */
+  beforeMarkdownParse?(markdownContent: string): string | Promise<string>;
   /**
    * Enable GFM line breaks. This option requires the gfm option to be true.
    * @default true
@@ -131,7 +140,7 @@ export interface HtmlResults {
   /**
    * The resulting HTML, which may be different from the passed in
    * HTML due to any changes that could have happened within the
-   * `beforeSerialize(frag)` option.
+   * `beforeHtmlSerialize(frag)` option.
    */
   html: string;
 }
