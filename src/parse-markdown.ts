@@ -51,6 +51,7 @@ export async function readMarkdownContent(filePath: string) {
   const results = {
     content: '',
     filePath,
+    slug: '',
   };
 
   if (ext === '.markdown') {
@@ -84,6 +85,7 @@ export async function readMarkdownContent(filePath: string) {
     }
   }
 
+  results.slug = slugifyFilePath(results.filePath);
   return results;
 }
 
