@@ -1,6 +1,7 @@
 export interface ParseHtmlOptions {
   /**
-   * Hook that can be used to modify the HTML content before it is parsed.
+   * Hook that can be used to modify the HTML content before it is parsed
+   * into a `document`. Should return the updated HTML as a string.
    */
   beforeHtmlParse?(htmlContent: string): string | Promise<string>;
   /**
@@ -9,6 +10,7 @@ export interface ParseHtmlOptions {
    * DOM object and common web APIs such as setAttribute and querySelector
    * can be used. The `document` can be accessed at `frag.ownerDocument`.
    * To create an element, use `frag.ownerDocument.createElement('div')`.
+   * The frag is updated in place.
    * @param frag DOM document fragment of the parsed content.
    */
   beforeHtmlSerialize?(frag: DocumentFragment): void | Promise<void>;
@@ -59,9 +61,17 @@ export interface ParseMarkdownContentOptions extends ParseHtmlOptions {
    */
   baseUrl?: string;
   /**
-   * Hook that can be used to modify the markdown content before it is parsed.
+   * Hook that can be used to modify the markdown content before it is converted
+   * into HTML. This happens after the markdown file's front matter has been parsed
+   * and the front matter attributes are available as the second param. Should return
+   * the updated markdown content.
+   * @param markdownContent The markdown content.
+   * @param frontMatterAttributes The front matter attributes already parsed from the markdown content
    */
-  beforeMarkdownParse?(markdownContent: string): string | Promise<string>;
+  beforeMarkdownToHtml?(
+    markdownContent: string,
+    frontMatterAttributes: any,
+  ): string | Promise<string>;
   /**
    * Enable GFM line breaks. This option requires the gfm option to be true.
    * @default true

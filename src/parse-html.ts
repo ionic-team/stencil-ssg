@@ -27,7 +27,7 @@ export async function parseHtmlContent(
   if (typeof opts.beforeHtmlParse === 'function') {
     html = await opts.beforeHtmlParse(html);
     if (typeof html !== 'string') {
-      throw new Error(`html must be a string`);
+      throw new Error(`returned html from beforeHtmlParse() must be a string`);
     }
   }
 

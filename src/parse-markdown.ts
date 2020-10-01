@@ -108,18 +108,26 @@ export async function parseMarkdownContent<T = { [key: string]: string }>(
   opts = opts || {};
   content = content.trim();
 
-  if (typeof opts.beforeMarkdownParse === 'function') {
-    content = await opts.beforeMarkdownParse(content);
-    if (typeof content !== 'string') {
-      throw new Error(`content must be a string`);
-    }
-  }
-
   const fsOpts = getFrontMatterOptions(opts);
   const markedOpts = getMarkedOptions(opts);
 
   const fmResults = frontMatter(content, fsOpts);
-  const html = await parseMarkdownRenderer(fmResults.body, markedOpts);
+
+  let markdownContent = fmResults.body;
+
+  if (typeof opts.beforeMarkdownToHtml === 'function') {
+    const fmAttrs = fmResults.attributes
+      ? JSON.parse(JSON.stringify(fmResults.attributes))
+      : {};
+    markdownContent = await opts.beforeMarkdownToHtml(markdownContent, fmAttrs);
+    if (typeof markdownContent !== 'string') {
+      throw new Error(
+        `returned markdown content from beforeMarkdownToHtml() must be a string`,
+      );
+    }
+  }
+
+  const html = await parseMarkdownRenderer(markdownContent, markedOpts);
 
   const htmlResults = await parseHtmlContent(html, opts);
 
