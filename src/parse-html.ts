@@ -139,6 +139,7 @@ function getHtmlOptions(opts?: ParseHtmlOptions) {
 const defaultParseHtmlOpts: ParseHtmlOptions = {
   headingAnchorClassName: `heading-anchor`,
   headingIds: true,
+  headingAnchors: true,
   paragraphIntroClassName: `paragraph-intro`,
 };
 

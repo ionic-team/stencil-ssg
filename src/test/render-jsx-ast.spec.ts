@@ -6,9 +6,7 @@ describe(`RenderJsxAst`, () => {
   let opts: ParseMarkdownOptions;
 
   beforeEach(() => {
-    opts = {
-      useCache: false,
-    };
+    opts = {};
   });
 
   it(`parse/serialize, elementProps`, async () => {
@@ -57,6 +55,7 @@ describe(`RenderJsxAst`, () => {
   });
 
   it(`parse/serialize`, async () => {
+    opts.headingAnchors = false;
     const r = await parseMarkdownContent(
       md(`
         # Hill Valley

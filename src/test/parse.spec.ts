@@ -9,6 +9,7 @@ describe(`parseMarkdownContent`, () => {
   });
 
   it(`before html serialize`, async () => {
+    opts.headingAnchors = false;
     opts.beforeHtmlSerialize = frag => {
       const h1 = frag.querySelector('h1');
       h1.textContent = `Updated Heading`;
@@ -33,8 +34,16 @@ describe(`parseMarkdownContent`, () => {
     );
   });
 
-  it(`anchor links`, async () => {
-    opts.headingAnchors = true;
+  it(`heading id prefix`, async () => {
+    opts.headingIdPrefix = 'some-prefix-';
+    const r = await parseMarkdownContent(md(`# Heading`), opts);
+
+    expect(r.html).toBe(
+      `<h1 id="some-prefix-heading"><a href="#some-prefix-heading" class="heading-anchor" aria-hidden="true"></a>Heading</h1>`,
+    );
+  });
+
+  it(`heading anchor links by default`, async () => {
     const r = await parseMarkdownContent(md(`# Heading`), opts);
 
     expect(r.html).toBe(
@@ -42,7 +51,23 @@ describe(`parseMarkdownContent`, () => {
     );
   });
 
+  it(`no heading anchor links`, async () => {
+    opts.headingAnchors = false;
+    const r = await parseMarkdownContent(md(`# Heading`), opts);
+
+    expect(r.html).toBe(`<h1 id="heading">Heading</h1>`);
+  });
+
+  it(`no heading anchor links if headingAnchors=true but headingIds=false`, async () => {
+    opts.headingIds = false;
+    opts.headingAnchors = true;
+    const r = await parseMarkdownContent(md(`# Heading`), opts);
+
+    expect(r.html).toBe(`<h1>Heading</h1>`);
+  });
+
   it(`paragraph intro with no sub headings`, async () => {
+    opts.headingAnchors = false;
     const r = await parseMarkdownContent(
       md(`
         # Heading1
@@ -60,6 +85,7 @@ describe(`parseMarkdownContent`, () => {
   });
 
   it(`paragraph intro with sub headings`, async () => {
+    opts.headingAnchors = false;
     const r = await parseMarkdownContent(
       md(`
         # Heading1
@@ -107,7 +133,10 @@ describe(`parseMarkdownContent`, () => {
     expect(imgAst[0]).toBe('img');
     expect(imgAst[1].alt).toBe('save the clock tower');
     expect(imgAst[1].src).toBe('clock-tower.png');
-    expect(imgAst[1].style).toEqual({ 'max-height': '360px', width: '240px' });
+    expect(imgAst[1].style).toEqual({
+      'max-height': '360px',
+      'width': '240px',
+    });
     expect(imgAst[1].class).toBe('marty mcfly');
   });
 

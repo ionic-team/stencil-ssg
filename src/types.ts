@@ -30,7 +30,7 @@ export interface ParseHtmlOptions {
    * to also set the anchor's CSS on a heading hover.
    *
    * `<h2 id="my-id"><a href="#my-id" class="heading-anchor" aria-hidden="true"></a>Text</h2>`
-   * @default false
+   * @default true
    */
   headingAnchors?: boolean;
   /**
