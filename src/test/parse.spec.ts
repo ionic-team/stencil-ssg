@@ -2,6 +2,7 @@ import { parseMarkdownContent } from '../parse';
 import type { ParseMarkdownOptions } from '../types';
 
 describe(`parseMarkdownContent`, () => {
+  require('../prism.js');
   let opts: ParseMarkdownOptions;
 
   beforeEach(() => {
@@ -106,7 +107,35 @@ describe(`parseMarkdownContent`, () => {
     );
   });
 
-  it(`code block`, async () => {
+  it(`code block diff-typescript`, async () => {
+    const c: string[] = [];
+    c.push('```diff-typescript');
+    c.push('-let x = 88;');
+    c.push('+let x = 99;');
+    c.push('```');
+    const r = await parseMarkdownContent(c.join('\n'), opts);
+    expect(r.html).toContain('<pre class="language-diff-typescript diff-highlight"><code>');
+    expect(r.html).toContain('<span class="token deleted-sign deleted language-typescript"><span class="token prefix deleted">-');
+    expect(r.html).toContain('<span class=\"token inserted-sign inserted language-typescript\"><span class=\"token prefix inserted\">+');
+    expect(r.html).toContain('<span class=\"token keyword\">let</span>');
+    expect(r.html).toContain('<span class=\"token operator\">=</span>');
+  });
+
+  it(`code block diff`, async () => {
+    const c: string[] = [];
+    c.push('```diff');
+    c.push('-let x = 88;');
+    c.push('+let x = 99;');
+    c.push('```');
+    const r = await parseMarkdownContent(c.join('\n'), opts);
+    expect(r.html).toContain('<pre class="language-diff diff-highlight"><code>');
+    expect(r.html).toContain('<span class=\"token deleted-sign deleted\"><span class=\"token prefix deleted\">-</span>let x = 88;');
+    expect(r.html).toContain('<span class=\"token inserted-sign inserted\"><span class=\"token prefix inserted\">+</span>let x = 99;');
+    expect(r.html).not.toContain('<span class=\"token keyword\">let</span>');
+    expect(r.html).not.toContain('<span class=\"token operator\">=</span>');
+  });
+
+  it(`code block typescript`, async () => {
     const c: string[] = [];
     c.push('```typescript');
     c.push('function mph() {');

@@ -1,8 +1,6 @@
 import type { ParseMarkdownOptions } from './types';
 import marked, { MarkedOptions, Renderer } from 'marked';
-
-const Prism = require('prismjs');
-const loadLanguages = require('prismjs/components/');
+import type PrismGlobal from 'prismjs';
 
 export function parseMarkdownRenderer(
   markdown: string,
@@ -50,37 +48,13 @@ class MarkedRenderer extends Renderer {
       return super.code(code, infostring, escaped);
     }
 
-    const lang = (infostring || '').match(/\S*/)[0];
-    const hcl: number[] = [];
-    code = code
-      .split('\n')
-      .map((line, index) => {
-        if (line.charAt(0) === '|') {
-          hcl.push(index + 1);
-          return line.substring(1);
-        }
-        return line;
-      })
-      .join('\n');
-
-    if (typeof lang === 'string' && lang.length > 0) {
-      if (
-        !loadedPrismLangs.includes(lang) ||
-        !Object.keys(Prism.languages).includes(lang)
-      ) {
-        loadedPrismLangs.push(lang);
-        loadLanguages(loadedPrismLangs);
-      }
-      const primsLang = Prism.languages[lang];
-      if (primsLang) {
-        const prismCode = Prism.highlight(code, Prism.languages[lang], lang);
+    const info = getCodeBlockInfo(infostring, this.opts.langPrefix); 
+    if (info) {
+      const grammar = Prism.languages[info.grammar];
+      if (grammar) {
+        const prismCode = Prism.highlight(code, grammar, info.language);
         if (typeof prismCode === 'string') {
-          const langCss =
-            (this.opts.langPrefix || 'language-') + escape(lang, true);
-          const preAttr = `class="${langCss}"${
-            hcl.length > 0 ? ` data-highlighted-lines="${hcl.join(',')}"` : ``
-          }`;
-          return `<pre ${preAttr}><code>${prismCode}</code></pre>\n`;
+          return `<pre class="${info.cssClass}"><code>${prismCode}</code></pre>\n`;
         }
       }
     }
@@ -91,6 +65,31 @@ class MarkedRenderer extends Renderer {
   heading(text: string, level: number) {
     return `<h${level}>${text}</h${level}>`;
   }
+}
+
+function getCodeBlockInfo(infostring: string, langPrefix?: string) {
+  if (typeof infostring === 'string') {
+    infostring = infostring.trim().toLowerCase();
+    if (infostring.length > 0) {
+      infostring = escape(infostring, true);
+      langPrefix = (langPrefix || 'language-');
+
+      const info = {
+        grammar: infostring,
+        language: infostring,
+        cssClass: langPrefix + infostring,
+      };
+
+      if (infostring.startsWith('diff')) {
+        // https://prismjs.com/plugins/diff-highlight/
+        info.grammar = 'diff';
+        info.cssClass += ` diff-highlight`;
+      }
+
+      return info;
+    }
+  }
+  return null;
 }
 
 export function getMarkedOptions(opts: ParseMarkdownOptions) {
@@ -116,8 +115,6 @@ const defaultParseMarkdownOpts: ParseMarkdownOptions = {
   codeSyntaxHighlighting: true,
   gfm: true,
 };
-
-const loadedPrismLangs: string[] = [];
 
 const escapeTest = /[&<>"']/;
 const escapeReplace = /[&<>"']/g;
@@ -145,3 +142,5 @@ function escape(html: string, encode: boolean) {
 
   return html;
 }
+
+declare const Prism: typeof PrismGlobal;
