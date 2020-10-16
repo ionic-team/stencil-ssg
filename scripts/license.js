@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const entryDeps = ['front-matter', 'marked', 'slugify'];
+const entryDeps = ['front-matter', 'marked', 'prismjs', 'slugify'];
+const excludeDeps = ['clipboard'];
 
 function createLicense() {
   const thirdPartyLicensesRootPath = path.join(__dirname, '..', 'NOTICE.md');
@@ -175,6 +176,9 @@ function includeDepLicense(bundledDeps, moduleId) {
     return false;
   }
   if (bundledDeps.some(b => b.moduleId === moduleId)) {
+    return false;
+  }
+  if (excludeDeps.includes(moduleId)) {
     return false;
   }
   return true;

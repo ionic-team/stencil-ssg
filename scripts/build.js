@@ -4,8 +4,10 @@ const rollup = require('rollup');
 const rollupCommonjs = require('@rollup/plugin-commonjs');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
-const buildDir = path.join(__dirname, '..', 'build');
-const distDir = path.join(__dirname, '..', 'dist');
+const rootDir = path.join(__dirname, '..',);
+const buildDir = path.join(rootDir, 'build');
+const distDir = path.join(rootDir, 'dist');
+const srcPrism = path.join(rootDir, 'src', 'prism.js');
 
 async function build() {
   await bundleIndexEsm();
@@ -37,7 +39,6 @@ async function bundleParseCjs() {
       '@stencil/core/mock-doc',
       'crypto',
       'path',
-      'prismjs',
       'fs',
       'os',
       'util',
@@ -50,12 +51,16 @@ async function bundleParseCjs() {
     ],
   };
 
+  let prismCode = `(function() {\n${fs.readFileSync(srcPrism, 'utf8')}\n})();`;
+  prismCode = prismCode.replace(`module.exports = Prism;`, ``);
+
   const rollupBuild = await rollup.rollup(inputOpts);
 
   await rollupBuild.write({
     format: 'cjs',
     file: path.join(distDir, 'parse.js'),
     preferConst: true,
+    intro: prismCode
   });
 }
 
