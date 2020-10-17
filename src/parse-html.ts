@@ -56,7 +56,8 @@ export async function parseHtmlContent(
     if (
       opts?.headingAnchors &&
       typeof headingData.id === 'string' &&
-      headingData.id.length > 0
+      headingData.id.length > 0 &&
+      headingData.level > 1
     ) {
       // <h2 id="my-id"><a href="#my-id" class="heading-anchor" aria-hidden="true"></a>Text</h2>
       const anchor = doc.createElement('a');

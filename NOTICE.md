@@ -167,8 +167,6 @@ License: MIT
 
 Author: Lea Verou
 
-Homepage: https://github.com/PrismJS/prism#readme
-
 > MIT LICENSE
 > 
 > Copyright (c) 2012 Lea Verou
