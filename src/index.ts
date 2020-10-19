@@ -6,12 +6,13 @@ import type { RenderJsxProps, JsxAstNode, ElementPropsHook } from './types';
  * has already been converted into a serializable JSX AST format.
  */
 export const RenderJsxAst = (props: RenderJsxProps) => {
-  const elementProps =
-    typeof props.elementProps === 'function' ? props.elementProps : undefined;
+  if (props && Array.isArray(props.ast)) {
+    const elementProps =
+      typeof props.elementProps === 'function' ? props.elementProps : undefined;
 
-  return Array.isArray(props.ast)
-    ? props.ast.map(node => toHypertext(elementProps, node))
-    : null;
+    return props.ast.map(node => toHypertext(elementProps, node));
+  }
+  return null;
 };
 
 /**
