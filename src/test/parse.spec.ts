@@ -40,15 +40,15 @@ describe(`parseMarkdownContent`, () => {
     const r = await parseMarkdownContent(md(`# Heading`), opts);
 
     expect(r.html).toBe(
-      `<h1 id="some-prefix-heading"><a href="#some-prefix-heading" class="heading-anchor" aria-hidden="true"></a>Heading</h1>`,
+      `<h1 id="some-prefix-heading">Heading</h1>`,
     );
   });
 
   it(`heading anchor links by default`, async () => {
-    const r = await parseMarkdownContent(md(`# Heading`), opts);
+    const r = await parseMarkdownContent(md(`## Heading`), opts);
 
     expect(r.html).toBe(
-      `<h1 id="heading"><a href="#heading" class="heading-anchor" aria-hidden="true"></a>Heading</h1>`,
+      `<h2 id="heading"><a href="#heading" class="heading-anchor" aria-hidden="true"></a>Heading</h2>`,
     );
   });
 
