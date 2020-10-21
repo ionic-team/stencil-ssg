@@ -233,6 +233,33 @@ describe(`parseMarkdownContent`, () => {
     expect(r.imgs[0].src).toBe(`/clock-tower.png`);
   });
 
+  it(`no br breaks default`, async () => {
+    const r = await parseMarkdownContent(
+      md(`
+        Save
+        the
+        clock
+        tower
+      `),
+      opts,
+    );
+    expect(r.html.replace(/\n/g, ' ')).toBe(`<p class="paragraph-intro">Save the clock tower</p>`);
+  });
+
+  it(`set br breaks`, async () => {
+    opts.breaks = true;
+    const r = await parseMarkdownContent(
+      md(`
+        Save
+        the
+        clock
+        tower
+      `),
+      opts,
+    );
+    expect(r.html.replace(/\n/g, ' ')).toBe(`<p class="paragraph-intro">Save<br>the<br>clock<br>tower</p>`);
+  });
+
   it(`attributes`, async () => {
     const r = await parseMarkdownContent(
       md(`

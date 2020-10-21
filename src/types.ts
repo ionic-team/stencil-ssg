@@ -74,7 +74,7 @@ export interface ParseMarkdownContentOptions extends ParseHtmlOptions {
   ): string | Promise<string>;
   /**
    * Enable GFM line breaks. This option requires the gfm option to be true.
-   * @default true
+   * @default false
    */
   breaks?: boolean;
   /**

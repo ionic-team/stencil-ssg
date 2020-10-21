@@ -111,7 +111,7 @@ const defaultMarkedOpts: MarkedOptions = {
 };
 
 const defaultParseMarkdownOpts: ParseMarkdownOptions = {
-  breaks: true,
+  breaks: false,
   codeSyntaxHighlighting: true,
   gfm: true,
 };
