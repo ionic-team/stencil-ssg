@@ -37,8 +37,11 @@ class MarkedRenderer extends Renderer {
   }
 
   paragraph(text: string) {
-    const match = text.match(/<[a-z]+(-[a-z]+)+[^>]*>.*<\/[a-z]+(-[a-z]+)+>/m);
-    if (match) return `${text}\n`;
+    const customComponentMatch = text.match(/<[a-z]+(-[a-z]+)+[^>]*>.*<\/[a-z]+(-[a-z]+)+>/m);
+    if (customComponentMatch) return `${text}\n`;
+
+    const imageMatch = text.match(/<img[^>]*?\/>/m)
+    if (imageMatch) return `${text}\n`;
 
     return `<p>${text}</p>\n`;    
   }
@@ -64,6 +67,10 @@ class MarkedRenderer extends Renderer {
 
   heading(text: string, level: number) {
     return `<h${level}>${text}</h${level}>`;
+  }
+
+  image(href: string, title: string, text: string) {
+    return `<img src="${href}" alt="${text}" ${title ? `title="${title}"` : ''} />`;
   }
 }
 
