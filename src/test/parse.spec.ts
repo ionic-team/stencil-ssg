@@ -345,6 +345,35 @@ describe(`parseMarkdownContent`, () => {
     expect(secondParagraphAst[0]).toBe(`p`);
     expect(secondParagraphAst[2]).toBe(`This is the second paragraph.`);
   });
+
+  it(`render images at top level`, async () => {
+    const r = await parseMarkdownContent(
+      md(`
+        You can install these easily by opening
+
+        ![SDK Platforms](/assets/img/docs/android/sdk-platforms.png)
+        ![SDK Tools](/assets/img/docs/android/sdk-tools.png)
+        
+        # Creating Android Project
+      `),
+      opts,
+    );
+    
+    const firstParagraphAst = r.ast[0];
+    const firstImageAst = r.ast[1];
+    const secondImageAst = r.ast[2];
+    const firstHeadingAst = r.ast[3];
+
+    expect(firstParagraphAst[0]).toBe(`p`);
+    expect(firstParagraphAst[2]).toBe(`You can install these easily by opening`);
+
+    expect(firstImageAst[0]).toBe(`img`);
+    expect(secondImageAst[0]).toBe(`img`);
+    expect(secondImageAst[1].alt).toBe(`SDK Tools`);
+
+    expect(firstHeadingAst[0]).toBe(`h1`);
+    expect(firstHeadingAst[2]).toBe(`Creating Android Project`);
+  });
 });
 
 function md(txt: string) {
