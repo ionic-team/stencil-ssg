@@ -1,6 +1,6 @@
 {
   "name": "@stencil/ssg",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Stencil Static Site Generation Utilities",
   "keywords": [
     "static site generation",
