@@ -94,10 +94,6 @@ export interface ParseMarkdownContentOptions extends ParseHtmlOptions {
    * @default "language-"
    */
   langPrefix?: string;
-  /**
-   * Sanitize the output. Ignore any HTML that has been input.
-   */
-  sanitize?: boolean;
 }
 
 export interface ParseMarkdownOptions extends ParseMarkdownContentOptions {

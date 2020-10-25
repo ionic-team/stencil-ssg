@@ -189,10 +189,6 @@ function parsedNodeToJsxAst(
       const attrs: { [tag: string]: any } = {};
       let tag = elm.tagName.toLowerCase();
 
-      if (tagBlacklist[tag]) {
-        tag = 'template';
-      }
-
       if (!tagNames.includes(tag)) {
         tagNames.push(tag);
       }
@@ -268,13 +264,3 @@ function convertStyleAttrToObj(styleStr: string) {
   }
   return null;
 }
-
-const tagBlacklist: { [key: string]: true } = {
-  script: true,
-  link: true,
-  meta: true,
-  object: true,
-  head: true,
-  html: true,
-  body: true,
-};
