@@ -32,9 +32,6 @@ const toHypertext = (
 
   const args = [];
   const tagName = typeof node[0] === 'string' ? node[0].toLowerCase() : '';
-  if (tagBlacklist[tagName]) {
-    // return h('template', null, 'removed ' + tagName);
-  }
 
   let i: number;
   let l: number;
@@ -56,16 +53,6 @@ const toHypertext = (
   }
 
   return (h as any).apply(null, args);
-};
-
-const tagBlacklist: { [key: string]: true } = {
-  script: true,
-  link: true,
-  meta: true,
-  object: true,
-  head: true,
-  html: true,
-  body: true,
 };
 
 export type {
