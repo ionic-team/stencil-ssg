@@ -27,7 +27,7 @@
     "parse/"
   ],
   "dependencies": {
-    "@stencil/core": ">=2.1.0-3"
+    "@stencil/core": ">=2.1.0"
   },
   "devDependencies": {
     "@ionic/prettier-config": "^1.0.1",
