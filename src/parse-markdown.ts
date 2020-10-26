@@ -65,11 +65,26 @@ export async function readMarkdownContent(filePath: string) {
     // don't try resolving if that doesn't work
     results.content = await readFile(filePath, 'utf8');
   } else {
-    // with file path of `pages/my-file`, will attempt:
-    // 1. `pages/my-file.md`
-    // 2. `pages/my-file/index.md`
-    const mdFilePath = filePath + '.md';
-    const indexMdFilePath = path.join(filePath, 'index.md');
+    let mdFilePath: string;
+    let indexMdFilePath: string;
+
+    if (filePath.endsWith('/')) {
+      // with file path of `pages/my-file/`, will attempt:
+      // 1. `pages/my-file.md`
+      // 2. `pages/my-file/index.md`
+      mdFilePath = filePath.substring(0, filePath.length - 1) + '.md';
+      indexMdFilePath = path.join(
+        filePath.substring(0, filePath.length - 1),
+        'index.md',
+      );
+    } else {
+      // with file path of `pages/my-file`, will attempt:
+      // 1. `pages/my-file.md`
+      // 2. `pages/my-file/index.md`
+      mdFilePath = filePath + '.md';
+      indexMdFilePath = path.join(filePath, 'index.md');
+    }
+
     try {
       results.content = await readFile(mdFilePath, 'utf8');
       results.filePath = mdFilePath;
